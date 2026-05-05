@@ -63,12 +63,14 @@ body::after {
     linear-gradient(90deg, rgba(0, 242, 255, 0.1) 1px, transparent 1px);
   background-size: 100px 100px;
   box-shadow: inset 0 0 100px rgba(0, 242, 255, 0.1);
+  pointer-events: none; /* Fix: Tidak boleh blokir klik */
 }
 .map-space::before { 
   background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); 
   background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px);
   background-size: 200px 200px;
   background-position: 0 0, 100px 100px;
+  pointer-events: none; /* Fix: Tidak boleh blokir klik */
 }
 
 .shield-active { box-shadow: 0 0 20px 5px var(--primary); border-radius: 50%; }
@@ -159,7 +161,8 @@ body::before {
   width: 100%;
   height: 100%;
   z-index: -1;
-  transition: all 0.5s ease; /* Smooth transition between arenas */
+  pointer-events: none; /* Fix: Jangan intercept klik/touch apapun */
+  transition: all 0.5s ease;
 }
 
 @keyframes bgScroll {
@@ -590,6 +593,93 @@ button:hover {
 .fade-in { animation: fadeIn 0.4s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+/* ===== EFEK VISUAL ANIME BATTLE & CARD BATTLE ===== */
+@keyframes skillText {
+  0%   { opacity:0; transform: translate(-50%,-50%) scale(0.3) rotate(-10deg); }
+  30%  { opacity:1; transform: translate(-50%,-50%) scale(1.3) rotate(2deg); }
+  70%  { opacity:1; transform: translate(-50%,-50%) scale(1.1) rotate(-1deg); }
+  100% { opacity:0; transform: translate(-50%,-50%) scale(0.8) translateY(-60px); }
+}
+@keyframes shockwave {
+  0%   { transform: translate(-50%,-50%) scale(0); opacity:0.9; }
+  100% { transform: translate(-50%,-50%) scale(6); opacity:0; }
+}
+@keyframes lightning {
+  0%,100% { opacity:0; } 20%,60% { opacity:1; } 40%,80% { opacity:0.5; }
+}
+@keyframes floatDmg {
+  0%   { opacity:1; transform: translateX(-50%) translateY(0) scale(1); }
+  100% { opacity:0; transform: translateX(-50%) translateY(-80px) scale(1.4); }
+}
+@keyframes orbPulse {
+  0%   { transform:scale(1); box-shadow: 0 0 20px var(--orb-color); }
+  50%  { transform:scale(1.3); box-shadow: 0 0 50px var(--orb-color), 0 0 100px var(--orb-color); }
+  100% { transform:scale(1); box-shadow: 0 0 20px var(--orb-color); }
+}
+@keyframes screenCrack {
+  0%   { opacity:0; }
+  10%  { opacity:1; }
+  90%  { opacity:1; }
+  100% { opacity:0; }
+}
+@keyframes meteorFall {
+  0%   { transform: translate(0,0) scale(0.5) rotate(-45deg); opacity:1; }
+  100% { transform: translate(60px, 200px) scale(2) rotate(-45deg); opacity:0; }
+}
+@keyframes cardFlip {
+  0%   { transform: rotateY(0deg) scale(1); }
+  50%  { transform: rotateY(90deg) scale(1.1); }
+  100% { transform: rotateY(0deg) scale(1); }
+}
+@keyframes cardSlam {
+  0%   { transform: translateY(-120px) scale(1.3) rotate(-5deg); opacity:0; }
+  60%  { transform: translateY(8px) scale(0.95) rotate(1deg); opacity:1; }
+  80%  { transform: translateY(-4px) scale(1.02); }
+  100% { transform: translateY(0) scale(1) rotate(0deg); opacity:1; }
+}
+@keyframes burnEffect {
+  0%,100% { box-shadow: 0 0 8px #ff4500, 0 0 16px #ff6b00; }
+  50%      { box-shadow: 0 0 20px #ff4500, 0 0 40px #ff6b00, 0 0 60px #ffd700; }
+}
+@keyframes iceEffect {
+  0%,100% { box-shadow: 0 0 10px #82ccd9, 0 0 20px #a8edea; }
+  50%      { box-shadow: 0 0 25px #82ccd9, 0 0 50px #a8edea; }
+}
+@keyframes ripple {
+  0%   { transform:translate(-50%,-50%) scale(0); opacity:0.8; border-width:8px; }
+  100% { transform:translate(-50%,-50%) scale(5); opacity:0; border-width:1px; }
+}
+.cb-skill-text {
+  position: fixed; pointer-events:none; z-index:9000;
+  font-family: 'Orbitron', sans-serif; font-weight:900;
+  font-size: clamp(18px,5vw,32px); text-align:center;
+  left:50%; top:50%;
+  animation: skillText 1.4s ease-out forwards;
+  text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+  white-space:nowrap;
+}
+.fx-shockwave {
+  position:fixed; pointer-events:none; z-index:8999;
+  width:60px; height:60px; border-radius:50%;
+  animation: shockwave 0.7s ease-out forwards;
+}
+.fx-dmg {
+  position:fixed; pointer-events:none; z-index:9001;
+  font-family:'Orbitron',sans-serif; font-weight:900;
+  font-size:24px; left:50%;
+  animation: floatDmg 1s ease-out forwards;
+  text-shadow: 0 0 10px currentColor;
+}
+.fx-ripple {
+  position:fixed; pointer-events:none; z-index:8998;
+  width:40px; height:40px; border-radius:50%;
+  border: 6px solid currentColor;
+  animation: ripple 0.8s ease-out forwards;
+}
+.cb-card-active {
+  animation: cardSlam 0.4s ease-out;
+}
+
 .particle {
   position: absolute;
   pointer-events: none;
@@ -690,6 +780,8 @@ button:hover {
     <button class="btn-normal" style="background: linear-gradient(135deg, #1D976C, #93F9B9);" onclick="setMode('tiles')">⚡ TILES<br><small style="font-size: 7px; opacity: 0.6;">SONIC TAP</small></button>
     
     <button class="btn-insane btn-full" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);" onclick="setMode('ballbattle')">🔮 ANIME BATTLE<br><small style="font-size: 8px; opacity: 0.8;">DOMAIN EXPANSION & SKILLS</small></button>
+    <button class="btn-insane btn-full" style="background: linear-gradient(135deg, #c0392b, #8e44ad);" onclick="setMode('cardbattle')">🃏 CARD BATTLE<br><small style="font-size: 8px; opacity: 0.8;">DUEL ANIME CARDS</small></button>
+    <button class="btn-insane btn-full" style="background: linear-gradient(135deg, #c0392b, #8e44ad);" onclick="setMode('cardbattle')">🃏 CARD BATTLE<br><small style="font-size: 8px; opacity: 0.8;">DUEL ANIME CARDS</small></button>
     
     <button class="btn-settings" style="background: #f39c12;" onclick="showShop()">🛒 SHOP</button>
     <button class="btn-settings" onclick="toggleSettings()">⚙️ SETTINGS</button>
@@ -812,6 +904,59 @@ button:hover {
   <button onclick="showLobby()" style="position: fixed; top: 10px; right: 10px; padding: 8px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-size: 9px; border-radius: 10px; backdrop-filter: blur(5px); z-index: 1000;">🏠 LOBBY</button>
 </div>
 
+<!-- ===== CARD BATTLE CONTAINER ===== -->
+<div id="cardBattleContainer" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:50; flex-direction:column; align-items:center; justify-content:space-between; padding:10px; box-sizing:border-box; background: linear-gradient(180deg, #1a0a2e 0%, #0d0d1a 100%);">
+  
+  <!-- Status Bar -->
+  <div style="width:100%; display:flex; justify-content:space-between; align-items:center; padding:4px 0;">
+    <div style="text-align:center;">
+      <div style="font-size:9px; color:#aaa; letter-spacing:1px;">MUSUH</div>
+      <div id="cbEnemyName" style="font-size:11px; color:#ff6b81; font-weight:bold; font-family:Orbitron;">???</div>
+      <div style="background:#333; border-radius:10px; width:120px; height:10px; margin:3px auto; border:1px solid #ff6b81;">
+        <div id="cbEnemyHpBar" style="height:100%; width:100%; background:linear-gradient(90deg,#ff4757,#ff6b81); border-radius:10px; transition:width 0.4s;"></div>
+      </div>
+      <div id="cbEnemyHpText" style="font-size:9px; color:#ff6b81;">❤️ 30/30</div>
+    </div>
+    <div style="text-align:center;">
+      <div id="cbTurnText" style="font-size:10px; color:#f1c40f; font-weight:bold; letter-spacing:2px; font-family:Orbitron;">GILIRANMU</div>
+      <div id="cbRoundText" style="font-size:9px; color:#aaa; margin-top:2px;">RONDE 1</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:9px; color:#aaa; letter-spacing:1px;">KAMU</div>
+      <div id="cbPlayerName" style="font-size:11px; color:#00f2ff; font-weight:bold; font-family:Orbitron;">HERO</div>
+      <div style="background:#333; border-radius:10px; width:120px; height:10px; margin:3px auto; border:1px solid #00f2ff;">
+        <div id="cbPlayerHpBar" style="height:100%; width:100%; background:linear-gradient(90deg,#00b4db,#00f2ff); border-radius:10px; transition:width 0.4s;"></div>
+      </div>
+      <div id="cbPlayerHpText" style="font-size:9px; color:#00f2ff;">❤️ 30/30</div>
+    </div>
+  </div>
+
+  <!-- Arena / Battle Log -->
+  <div id="cbArena" style="width:100%; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:4px 0;">
+    <!-- Enemy card slot -->
+    <div id="cbEnemySlot" style="width:80px; height:110px; border:2px dashed rgba(255,107,129,0.4); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#666;">KARTU<br>MUSUH</div>
+    <!-- Battle log -->
+    <div id="cbLog" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:8px 14px; font-size:10px; color:#ddd; text-align:center; min-height:36px; width:80%; max-width:320px; letter-spacing:0.5px;"></div>
+    <!-- Player card slot -->
+    <div id="cbPlayerSlot" style="width:80px; height:110px; border:2px dashed rgba(0,242,255,0.4); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#666;">KARTUMU</div>
+  </div>
+
+  <!-- Mana Bar -->
+  <div style="width:90%; max-width:360px; margin:2px auto; text-align:center;">
+    <div style="font-size:9px; color:#a29bfe; letter-spacing:2px; margin-bottom:3px;">✨ MANA: <span id="cbManaText">3/3</span></div>
+    <div style="display:flex; gap:4px; justify-content:center;" id="cbManaBar"></div>
+  </div>
+
+  <!-- Hand Cards -->
+  <div style="width:100%; text-align:center; margin-bottom:2px;">
+    <div style="font-size:9px; color:#aaa; letter-spacing:1px; margin-bottom:5px;">KARTU DI TANGAN — KETUK UNTUK MAIN</div>
+    <div id="cbHand" style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap; padding:0 6px;"></div>
+  </div>
+
+  <!-- End Turn Button -->
+  <button onclick="cbEndTurn()" id="cbEndTurnBtn" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe); color:white; border:none; padding:10px 30px; border-radius:20px; font-family:Orbitron; font-size:11px; letter-spacing:2px; margin-bottom:4px; cursor:pointer; box-shadow:0 0 15px rgba(108,92,231,0.5);">⚔️ AKHIRI GILIRAN</button>
+</div>
+
 <div id="gameOver" class="menu-overlay" style="background: rgba(10, 10, 20, 0.95); display: none; flex-direction: column;">
   <div class="btn-group fade-in" style="text-align: center;">
     <h1 style="grid-column: span 2; font-family: 'Orbitron'; color: var(--danger); font-size: 24px; margin-bottom: 10px;">GAME OVER 💀</h1>
@@ -832,14 +977,23 @@ let highScore = parseInt(localStorage.getItem("gameDexHighScore")) || 0;
 let coins = parseInt(localStorage.getItem("gameDexCoins")) || 0;
 let xp = parseInt(localStorage.getItem("gameDexXP")) || 0;
 
-// Owner Identity Logic
-if (!localStorage.getItem("gameDexOwnerKey")) {
-    // Baris ini memberikan status owner ke kamu saat pertama kali dijalankan
-    localStorage.setItem("gameDexOwnerKey", "true");
+// Owner Identity Logic - Password hanya diketahui owner asli
+// Ketik kode rahasia di konsol: unlockOwner("gamedex2025") untuk aktifkan badge
+const OWNER_SECRET = "gamedex2025"; // Ganti kode ini jika mau
+
+function unlockOwner(code) {
+    if (code === OWNER_SECRET) {
+        localStorage.setItem("gameDexOwnerKey", btoa(OWNER_SECRET));
+        checkOwnerStatus();
+        console.log("✅ Owner status aktif!");
+    } else {
+        console.log("❌ Kode salah.");
+    }
 }
 
 function checkOwnerStatus() {
-    const isOwner = localStorage.getItem("gameDexOwnerKey") === "true";
+    const stored = localStorage.getItem("gameDexOwnerKey");
+    const isOwner = stored === btoa(OWNER_SECRET);
     const badge = document.getElementById('ownerBadge');
     if (badge) badge.style.display = isOwner ? 'inline-block' : 'none';
 }
@@ -1529,6 +1683,270 @@ function createParticles(x, y, color) {
   }
 }
 
+// ===== FUNGSI EFEK VISUAL ANIME & CARD BATTLE =====
+
+function fxSkillText(text, color, subtext='') {
+  const el = document.createElement('div');
+  el.className = 'cb-skill-text';
+  el.style.color = color;
+  el.innerHTML = text + (subtext ? `<br><span style="font-size:0.5em;opacity:0.8;">${subtext}</span>` : '');
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1500);
+}
+
+function fxShockwave(x, y, color) {
+  const el = document.createElement('div');
+  el.className = 'fx-shockwave';
+  el.style.cssText = `left:${x}px; top:${y}px; background:radial-gradient(circle, ${color}88 0%, transparent 70%); border:2px solid ${color};`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 750);
+}
+
+function fxRipple(x, y, color) {
+  for(let i=0; i<3; i++) {
+    const el = document.createElement('div');
+    el.className = 'fx-ripple';
+    el.style.cssText = `left:${x}px; top:${y}px; color:${color}; animation-delay:${i*0.15}s;`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+  }
+}
+
+function fxFloatDmg(y, text, color) {
+  const el = document.createElement('div');
+  el.className = 'fx-dmg';
+  el.style.cssText = `top:${y}px; color:${color};`;
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1100);
+}
+
+function fxLightning(color='#fff') {
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:8990;animation:lightning 0.4s ease-out forwards;`;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx2 = canvas.getContext('2d');
+  // Gambar kilat zigzag
+  ctx2.strokeStyle = color;
+  ctx2.lineWidth = 3;
+  ctx2.shadowColor = color;
+  ctx2.shadowBlur = 20;
+  ctx2.globalAlpha = 0.9;
+  for(let b=0; b<3; b++) {
+    ctx2.beginPath();
+    let lx = Math.random() * canvas.width;
+    ctx2.moveTo(lx, 0);
+    for(let s=0; s<8; s++) {
+      lx += (Math.random()-0.5)*80;
+      ctx2.lineTo(lx, (canvas.height/8)*s);
+    }
+    ctx2.stroke();
+  }
+  setTimeout(() => canvas.remove(), 450);
+}
+
+function fxScreenFlash(color, duration=300) {
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:${color};pointer-events:none;z-index:8985;opacity:0.7;transition:opacity ${duration}ms;`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => { el.style.opacity = '0'; });
+  setTimeout(() => el.remove(), duration + 100);
+}
+
+function fxMeteor(x, y) {
+  for(let i=0; i<5; i++) {
+    const m = document.createElement('div');
+    m.style.cssText = `position:fixed;left:${x + (Math.random()-0.5)*120}px;top:${y-60 + (Math.random()-0.5)*40}px;font-size:${20+Math.random()*20}px;pointer-events:none;z-index:8992;animation:meteorFall ${0.4+Math.random()*0.3}s ease-in forwards;animation-delay:${i*0.08}s;`;
+    m.textContent = '☄️';
+    document.body.appendChild(m);
+    setTimeout(() => m.remove(), 900);
+  }
+}
+
+function fxBurstParticles(x, y, color, count=20, emojis=null) {
+  if(!userPrefs.particles) return;
+  for(let i=0; i<count; i++) {
+    const p = document.createElement('div');
+    const angle = (i/count)*Math.PI*2;
+    const speed = 40 + Math.random()*80;
+    const dx = Math.cos(angle)*speed;
+    const dy = Math.sin(angle)*speed;
+    const size = 4 + Math.random()*8;
+    p.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:${color};border-radius:50%;pointer-events:none;z-index:8993;box-shadow:0 0 ${size}px ${color};transition:transform 0.6s ease-out,opacity 0.6s ease-out;`;
+    document.body.appendChild(p);
+    requestAnimationFrame(() => {
+      p.style.transform = `translate(${dx}px,${dy}px) scale(0)`;
+      p.style.opacity = '0';
+    });
+    if(emojis) {
+      p.style.background = 'none';
+      p.style.boxShadow = 'none';
+      p.style.fontSize = size*2+'px';
+      p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      p.style.borderRadius = '0';
+    }
+    setTimeout(() => p.remove(), 700);
+  }
+}
+
+function fxOrbPulse(x, y, color, duration=800) {
+  const orb = document.createElement('div');
+  orb.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:30px;height:30px;border-radius:50%;background:${color};--orb-color:${color};pointer-events:none;z-index:8994;animation:orbPulse 0.4s ease-in-out ${Math.ceil(duration/400)} forwards;transform:translate(-50%,-50%);`;
+  document.body.appendChild(orb);
+  setTimeout(() => orb.remove(), duration);
+}
+
+// ===== EFEK KHUSUS PER SKILL ANIME BATTLE =====
+
+function fxSkillAnime(charName, x, y) {
+  switch(charName) {
+    case 'Gojo':
+      fxScreenFlash('rgba(162,155,254,0.5)', 200);
+      fxSkillText('∞ INFINITE VOID ∞', '#a29bfe', 'Domain Expansion');
+      fxOrbPulse(x, y, '#a29bfe', 1200);
+      fxRipple(x, y, '#a29bfe');
+      fxBurstParticles(x, y, '#a29bfe', 24);
+      playSound(180, 'sine', 0.2);
+      break;
+    case 'Sukuna':
+      fxScreenFlash('rgba(255,0,0,0.4)', 200);
+      fxSkillText('MALEVOLENT SHRINE', '#ff4757', 'Cleave & Dismantle');
+      fxBurstParticles(x, y, '#ff4757', 30, ['⚔️','🩸','💀']);
+      fxShockwave(x, y, '#ff4757');
+      fxLightning('#ff4757');
+      playSound(120, 'sawtooth', 0.2);
+      break;
+    case 'Saitama':
+      fxScreenFlash('rgba(255,255,255,0.95)', 500);
+      fxSkillText('SERIOUS SERIOUS PUNCH', '#ffd700', 'Series: Serious');
+      fxShockwave(x, y, '#ffd700');
+      fxShockwave(x, y, '#fff');
+      fxBurstParticles(x, y, '#ffd700', 40);
+      setTimeout(() => fxShockwave(x, y, '#ffd700'), 200);
+      playSound(80, 'square', 0.3);
+      break;
+    case 'Naruto':
+      fxScreenFlash('rgba(255,140,0,0.4)', 200);
+      fxSkillText('BARYON MODE', '#ff9f43', 'Life Drain Active');
+      fxBurstParticles(x, y, '#ff9f43', 25, ['🍥','⚡','🌀']);
+      fxOrbPulse(x, y, '#ff9f43', 1500);
+      fxRipple(x, y, '#ff9f43');
+      playSound(440, 'sine', 0.15);
+      break;
+    case 'Madara':
+      fxScreenFlash('rgba(0,0,0,0.7)', 300);
+      fxSkillText('INFINITE TSUKUYOMI', '#ff6b81', 'Genjutsu: Rinne');
+      fxMeteor(x, y);
+      fxBurstParticles(x, y, '#ff6b81', 20, ['👁️','🌕','⚡']);
+      fxLightning('#ff6b81');
+      playSound(200, 'sawtooth', 0.2);
+      break;
+    case 'Zenitsu':
+      fxLightning('#ffd700');
+      fxSkillText('GODSPEED ⚡', '#ffd700', 'Thunderclap & Flash');
+      fxBurstParticles(x, y, '#ffd700', 30, ['⚡','✨']);
+      fxShockwave(x, y, '#ffd700');
+      playSound(880, 'sine', 0.15);
+      break;
+    case 'Luffy':
+      fxSkillText('GEAR FIFTH 🥁', '#ffffff', 'Warrior of Liberation');
+      fxBurstParticles(x, y, '#fff', 20, ['☁️','👒','⚡']);
+      fxOrbPulse(x, y, '#ffffff', 800);
+      playSound(330, 'sine', 0.1);
+      break;
+    case 'Tanjiro':
+      fxSkillText('HINOKAMI KAGURA 🔥', '#ff6348', 'Dance of the Fire God');
+      fxBurstParticles(x, y, '#ff6348', 22, ['🔥','🌊','💎']);
+      fxRipple(x, y, '#ff6348');
+      playSound(520, 'sine', 0.12);
+      break;
+    default:
+      fxShockwave(x, y, '#00f2ff');
+      fxBurstParticles(x, y, '#00f2ff', 15);
+      fxSkillText('SKILL ACTIVATED!', '#00f2ff');
+      playSound(440, 'square', 0.1);
+  }
+}
+
+// ===== EFEK KHUSUS CARD BATTLE =====
+function fxCardEffect(effect, side) {
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  const yPos = side === 'player' ? cy + 60 : cy - 60;
+
+  switch(effect) {
+    case 'double':
+      fxLightning('#ffd700');
+      fxSkillText('⚡ DOUBLE STRIKE ⚡', '#ffd700');
+      fxBurstParticles(cx, yPos, '#ffd700', 20, ['⚡','✨']);
+      fxShockwave(cx, yPos, '#ffd700');
+      break;
+    case 'heal':
+      fxSkillText('💚 HEALING +3', '#2ecc71', '');
+      fxBurstParticles(cx, yPos, '#2ecc71', 18, ['💚','✨','🌿']);
+      fxOrbPulse(cx, yPos, '#2ecc71', 800);
+      break;
+    case 'burn':
+      fxScreenFlash('rgba(255,69,0,0.3)', 200);
+      fxSkillText('🔥 BURN!', '#ff4500', '-2 HP/giliran');
+      fxBurstParticles(cx, yPos, '#ff4500', 22, ['🔥','💥']);
+      fxRipple(cx, yPos, '#ff4500');
+      break;
+    case 'stun':
+      fxScreenFlash('rgba(255,215,0,0.4)', 150);
+      fxLightning('#ffd700');
+      fxSkillText('💫 STUNNED!', '#ffd700', 'Skip giliran');
+      fxBurstParticles(cx, yPos, '#ffd700', 20, ['⚡','💫','⭐']);
+      break;
+    case 'freeze':
+      fxScreenFlash('rgba(130,204,217,0.4)', 200);
+      fxSkillText('🧊 FROZEN!', '#82ccd9', 'Skip giliran');
+      fxBurstParticles(cx, yPos, '#82ccd9', 20, ['🧊','❄️','💎']);
+      fxRipple(cx, yPos, '#82ccd9');
+      break;
+    case 'shield':
+      fxSkillText('🛡️ SHIELD +2', '#a29bfe', 'Damage absorbed');
+      fxOrbPulse(cx, yPos, '#a29bfe', 1000);
+      fxBurstParticles(cx, yPos, '#a29bfe', 15, ['🛡️','✨','💠']);
+      break;
+    case 'lifesteal':
+      fxScreenFlash('rgba(255,0,50,0.3)', 150);
+      fxSkillText('🩸 LIFE STEAL', '#ff6b81', '+3 HP absorbed');
+      fxBurstParticles(cx, yPos, '#ff6b81', 20, ['🩸','❤️','💀']);
+      fxShockwave(cx, yPos, '#ff6b81');
+      break;
+    case 'dodge':
+      fxSkillText('💨 DODGE READY', '#74b9ff', '50% evade');
+      fxBurstParticles(cx, yPos, '#74b9ff', 15, ['💨','👟','✨']);
+      break;
+    case 'meteor':
+      fxScreenFlash('rgba(255,100,0,0.5)', 300);
+      fxMeteor(cx, yPos);
+      fxSkillText('☄️ METEOR CRASH ☄️', '#ff7675', 'AoE Damage');
+      fxShockwave(cx, yPos, '#ff7675');
+      fxShockwave(cx, yPos, '#ffd700');
+      break;
+    case 'void':
+      fxScreenFlash('rgba(108,92,231,0.5)', 200);
+      fxSkillText('🔵 INFINITY', '#a29bfe', 'Damage -50%');
+      fxOrbPulse(cx, yPos, '#6c5ce7', 1200);
+      fxRipple(cx, yPos, '#6c5ce7');
+      break;
+    case 'copy':
+      fxSkillText('📖 COPY CAT', '#00cec9', 'Efek disalin');
+      fxBurstParticles(cx, yPos, '#00cec9', 15, ['📖','🔄','✨']);
+      break;
+    default:
+      fxShockwave(cx, yPos, '#fff');
+      fxBurstParticles(cx, yPos, '#fff', 12);
+      break;
+  }
+  // Selalu tampilkan damage float
+  fxFloatDmg(yPos - 30, side === 'player' ? '💥 ATK!' : '⚔️ HIT!', side === 'player' ? '#ff6b81' : '#00f2ff');
+}
+
 function spawnStar() {
   let star = document.createElement("div");
   star.innerHTML = "⭐";
@@ -1839,7 +2257,7 @@ function startGame(mode) {
   const modeNames = { 
     'plane': 'AERO STRIKE', 'snake': 'NEON COBRA', 'chess': 'GRANDMASTER AI', 
     'block': 'GRID BLAST', 'flappy': 'CYBER FLAP', 'tiles': 'SONIC TAP',
-    'ballbattle': 'ANIME BALLS'
+    'ballbattle': 'ANIME BALLS', 'cardbattle': 'CARD DUEL'
   };
   
   loaderText.innerHTML = `INITIALIZING ${modeNames[currentGameMode] || 'GAME'}...<br><span style="font-size:10px; opacity:0.6; letter-spacing:2px;">PREPARING ECOSYSTEM</span>`;
@@ -1851,7 +2269,7 @@ function startGame(mode) {
   const modeColors = { 
     'plane': '#00f2ff', 'snake': '#2ecc71', 'chess': '#f1c40f', 
     'block': '#3498db', 'flappy': '#ff0099', 'tiles': '#9d50bb',
-    'ballbattle': '#ff4757'
+    'ballbattle': '#ff4757', 'cardbattle': '#e74c3c'
   };
   document.documentElement.style.setProperty('--primary', modeColors[currentGameMode] || '#00f2ff');
 
@@ -1968,6 +2386,7 @@ function realStartGame(mode) {
     // Bug 4 Fix: tilesContainer harus disembunyikan saat masuk mode flappy
     document.getElementById('tilesContainer').style.display = 'none';
     document.getElementById('ballBattleContainer').style.display = 'none';
+    document.getElementById('cardBattleContainer').style.display = 'none';
     initFlappy();
   } else if (currentGameMode === 'tiles') {
     player.style.display = 'none';
@@ -2000,6 +2419,19 @@ function realStartGame(mode) {
     document.getElementById('chessContainer').style.display = 'none';
     document.getElementById('ballBattleContainer').style.display = 'block';
     initBallBattle();
+  } else if (currentGameMode === 'cardbattle') {
+    player.style.display = 'none';
+    scoreText.style.display = 'none';
+    document.getElementById('obsCounter').style.display = 'none';
+    document.getElementById('healBtn').style.display = 'none';
+    document.getElementById('hpBarContainer').style.display = 'none';
+    document.getElementById('blockContainer').style.display = 'none';
+    document.getElementById('tilesContainer').style.display = 'none';
+    document.getElementById('chessContainer').style.display = 'none';
+    document.getElementById('ballBattleContainer').style.display = 'none';
+    document.getElementById('cardBattleContainer').style.display = 'none';
+    document.getElementById('cardBattleContainer').style.display = 'flex';
+    initCardBattle();
   }
 }
 
@@ -2169,6 +2601,7 @@ function showLobby() {
     document.getElementById('chessContainer').style.display = 'none';
     document.getElementById('tilesContainer').style.display = 'none';
     document.getElementById('ballBattleContainer').style.display = 'none';
+    document.getElementById('cardBattleContainer').style.display = 'none';
     if(ballInterval) clearInterval(ballInterval);
     
     // Hapus semua objek game yang tersisa (Hard Cleanup)
@@ -2176,6 +2609,8 @@ function showLobby() {
     // Bug 5 Fix: Sembunyikan tombol skill ball battle saat kembali ke lobby
     const skillBtn = document.getElementById('ballSkillBtn');
     if(skillBtn) skillBtn.style.display = 'none';
+    const cbContainer = document.getElementById('cardBattleContainer');
+    if(cbContainer) cbContainer.style.display = 'none';
     
     // Switch UI ke Lobby
     document.getElementById('lobby').style.display = 'flex';
@@ -3144,12 +3579,14 @@ class Ball {
     
     if(this.char.name === 'Gojo') {
       showToast("DOMAIN EXPANSION: UNLIMITED VOID! 🌌");
+      fxSkillAnime('Gojo', this.x, this.y);
       overlay.style.background = 'radial-gradient(circle, #000 0%, #1a1a2e 100%)';
       overlay.style.opacity = '0.9';
       balls.forEach(b => { if(b !== this) { b.isFrozen = true; b.hp -= 5; }});
       setTimeout(() => { overlay.style.opacity = '0'; balls.forEach(b => b.isFrozen = false); }, 3000);
     } else if(this.char.name === 'Sukuna') {
       showToast("DOMAIN EXPANSION: MALEVOLENT SHRINE! ⛩️");
+      fxSkillAnime('Sukuna', this.x, this.y);
       overlay.style.background = 'rgba(255, 0, 0, 0.4)';
       overlay.style.opacity = '0.7';
       let cuts = 0;
@@ -3160,6 +3597,7 @@ class Ball {
       }, 200);
     } else if(this.char.name === 'Naruto') {
       showToast("BARYON MODE: LIFE DRAIN! 🔥");
+      fxSkillAnime('Naruto', this.x, this.y);
       overlay.style.background = 'rgba(255, 100, 0, 0.3)';
       overlay.style.opacity = '0.6';
       // Bug 4 Fix: Simpan speed asli, bukan vx/vy mentah (bisa stale setelah collision)
@@ -3215,6 +3653,7 @@ class Ball {
       setTimeout(() => { clearInterval(interval); overlay.style.opacity = '0'; }, 3000);
     } else if(this.char.name === 'Saitama') {
       showToast("SERIOUS SERIES: SERIOUS PUNCH! 👊");
+      fxSkillAnime('Saitama', this.x, this.y);
       overlay.style.background = 'white'; overlay.style.opacity = '0.9';
       // Bug 3 Fix: Cap velocity agar bola tidak kabur keluar layar selamanya
       balls.forEach(b => { 
@@ -3290,8 +3729,9 @@ function updateBallBattle() {
         }
         ball.hp -= 2;
         b2.hp -= 2;
-        createParticles(ball.x, ball.y, ball.char.color);
-        createParticles(b2.x, b2.y, b2.char.color);
+        fxBurstParticles(ball.x, ball.y, ball.char.color, 8);
+        fxShockwave(ball.x, ball.y, ball.char.color);
+        fxBurstParticles(b2.x, b2.y, b2.char.color, 8);
         playSound(200, 'sine', 0.05);
       }
     }
@@ -3416,6 +3856,398 @@ document.addEventListener('pointerdown', () => {
         audioCtx.resume();
     }
 }, { once: true });
+
+
+// ============================================================
+//  CARD BATTLE - DUEL ANIME CARDS
+// ============================================================
+
+const CB_CARDS = [
+  // name, emoji, cost, atk, hp, effect, desc
+  { name:'Naruto', emoji:'🍥', cost:2, atk:4, hp:5, effect:'heal', desc:'Sembuhkan 3 HP saat dimainkan' },
+  { name:'Goku', emoji:'⚡', cost:3, atk:7, hp:3, effect:'double', desc:'Serang 2x kali!' },
+  { name:'Saitama', emoji:'👊', cost:4, atk:12, hp:1, effect:null, desc:'Serangan dahsyat sekali pukul' },
+  { name:'Itachi', emoji:'🔥', cost:2, atk:3, hp:4, effect:'burn', desc:'Bakar musuh: -2 HP/giliran selama 2 ronde' },
+  { name:'Levi', emoji:'⚔️', cost:2, atk:5, hp:2, effect:null, desc:'Serangan cepat dan presisi' },
+  { name:'Luffy', emoji:'👒', cost:1, atk:2, hp:6, effect:'taunt', desc:'Provokasi: musuh wajib serang kartu ini' },
+  { name:'Kakashi', emoji:'📖', cost:3, atk:4, hp:4, effect:'copy', desc:'Salin efek kartu terakhir musuh' },
+  { name:'Zoro', emoji:'🗡️', cost:3, atk:6, hp:3, effect:null, desc:'Tiga pedang, tiga luka' },
+  { name:'Rem', emoji:'💙', cost:1, atk:2, hp:7, effect:'shield', desc:'Beri pelindung +2 HP extra' },
+  { name:'Zenitsu', emoji:'⚡', cost:2, atk:6, hp:2, effect:'stun', desc:'Pingsankan musuh 1 giliran' },
+  { name:'Gojo', emoji:'🔵', cost:4, atk:5, hp:6, effect:'void', desc:'Kurangi serangan musuh 50% giliran ini' },
+  { name:'Sukuna', emoji:'☠️', cost:4, atk:9, hp:4, effect:'lifesteal', desc:'Serap 3 HP dari musuh langsung' },
+  { name:'Eren', emoji:'⚙️', cost:3, atk:6, hp:5, effect:null, desc:'Titan pejuang kebebasan' },
+  { name:'Killua', emoji:'⚡', cost:2, atk:5, hp:3, effect:'dodge', desc:'50% hindari serangan berikutnya' },
+  { name:'Todoroki', emoji:'🧊', cost:3, atk:4, hp:5, effect:'freeze', desc:'Bekukan musuh: skip giliran berikutnya' },
+  { name:'Madara', emoji:'👁️', cost:5, atk:8, hp:7, effect:'meteor', desc:'Meteor: serang semua kartu musuh sekaligus' },
+];
+
+const CB_ENEMIES = [
+  { name:'Orochimaru', emoji:'🐍', hp:30, maxHp:30, deck: ['Saitama','Itachi','Zenitsu','Gojo','Levi','Naruto'], power:1.0, desc:'Ular licik dari Konoha' },
+  { name:'Pain', emoji:'💀', hp:35, maxHp:35, deck: ['Goku','Madara','Sukuna','Gojo','Todoroki','Saitama'], power:1.2, desc:'Pemimpin Akatsuki' },
+  { name:'Blackbeard', emoji:'☠️', hp:28, maxHp:28, deck: ['Zoro','Luffy','Eren','Kakashi','Killua','Zenitsu'], power:0.9, desc:'Bajak laut terkuat' },
+  { name:'DIO', emoji:'🧛', hp:32, maxHp:32, deck: ['Sukuna','Rem','Todoroki','Itachi','Gojo','Madara'], power:1.1, desc:'Za Warudo!' },
+];
+
+let cbPlayerHp, cbEnemyHp, cbPlayerMaxHp, cbEnemyMaxHp;
+let cbPlayerMana, cbManaMax;
+let cbHand, cbDeck, cbEnemyDeck;
+let cbTurn, cbRound, cbBurnTurns, cbStunned, cbFrozen;
+let cbLastEnemyEffect, cbPlayerShield, cbPlayerDodge, cbVoidActive;
+let cbCurrentEnemy, cbTauntCard;
+let cbEnemyFieldCard, cbPlayerFieldCard;
+let cbProcessing = false;
+
+function initCardBattle() {
+  // Pilih musuh berdasarkan difficulty
+  const enemyPool = currentDifficulty === 'insane' ? [CB_ENEMIES[1], CB_ENEMIES[3]] :
+                    currentDifficulty === 'hard'   ? [CB_ENEMIES[0], CB_ENEMIES[3]] :
+                                                     [CB_ENEMIES[0], CB_ENEMIES[2]];
+  cbCurrentEnemy = JSON.parse(JSON.stringify(enemyPool[Math.floor(Math.random() * enemyPool.length)]));
+
+  cbPlayerMaxHp = 30;
+  cbPlayerHp = 30;
+  cbEnemyMaxHp = cbCurrentEnemy.maxHp;
+  cbEnemyHp = cbCurrentEnemy.hp;
+  cbManaMax = currentDifficulty === 'insane' ? 2 : currentDifficulty === 'hard' ? 3 : 4;
+  cbPlayerMana = cbManaMax;
+  cbTurn = 'player';
+  cbRound = 1;
+  cbBurnTurns = 0;
+  cbStunned = false;
+  cbFrozen = false;
+  cbLastEnemyEffect = null;
+  cbPlayerShield = 0;
+  cbPlayerDodge = false;
+  cbVoidActive = false;
+  cbTauntCard = null;
+  cbEnemyFieldCard = null;
+  cbPlayerFieldCard = null;
+  cbProcessing = false;
+
+  // Build deck pemain (shuffle semua kartu)
+  cbDeck = [...CB_CARDS].sort(() => Math.random() - 0.5);
+  cbHand = [];
+  for (let i = 0; i < 4; i++) cbDrawCard();
+
+  // Build deck musuh
+  cbEnemyDeck = cbCurrentEnemy.deck.map(n => CB_CARDS.find(c => c.name === n)).filter(Boolean);
+  cbEnemyDeck.sort(() => Math.random() - 0.5);
+
+  cbUpdateUI();
+  cbSetLog(`⚔️ ${cbCurrentEnemy.emoji} ${cbCurrentEnemy.name} menantangmu! ${cbCurrentEnemy.desc}`);
+}
+
+function cbDrawCard() {
+  if (cbDeck.length === 0) {
+    cbDeck = [...CB_CARDS].sort(() => Math.random() - 0.5);
+  }
+  if (cbHand.length < 7) {
+    cbHand.push({...cbDeck.pop()});
+  }
+}
+
+function cbUpdateUI() {
+  // HP bars
+  const php = Math.max(0, cbPlayerHp / cbPlayerMaxHp * 100);
+  const ehp = Math.max(0, cbEnemyHp / cbEnemyMaxHp * 100);
+  document.getElementById('cbPlayerHpBar').style.width = php + '%';
+  document.getElementById('cbEnemyHpBar').style.width = ehp + '%';
+  document.getElementById('cbPlayerHpText').innerHTML = `❤️ ${Math.max(0,cbPlayerHp)}/${cbPlayerMaxHp}${cbPlayerShield > 0 ? ' 🛡️+'+cbPlayerShield : ''}`;
+  document.getElementById('cbEnemyHpText').innerHTML = `❤️ ${Math.max(0,cbEnemyHp)}/${cbEnemyMaxHp}${cbBurnTurns > 0 ? ' 🔥' : ''}${cbFrozen ? ' 🧊' : ''}`;
+  document.getElementById('cbEnemyName').innerHTML = cbCurrentEnemy.emoji + ' ' + cbCurrentEnemy.name;
+  document.getElementById('cbRoundText').innerHTML = 'RONDE ' + cbRound;
+  document.getElementById('cbTurnText').innerHTML = cbTurn === 'player' ? '⚔️ GILIRANMU' : '⏳ MUSUH...';
+
+  // Mana
+  document.getElementById('cbManaText').innerHTML = cbPlayerMana + '/' + cbManaMax;
+  const manaBar = document.getElementById('cbManaBar');
+  manaBar.innerHTML = '';
+  for (let i = 0; i < cbManaMax; i++) {
+    const gem = document.createElement('div');
+    gem.style.cssText = `width:14px; height:14px; border-radius:50%; background:${i < cbPlayerMana ? '#a29bfe' : '#333'}; border:1px solid #6c5ce7; transition:background 0.3s;`;
+    manaBar.appendChild(gem);
+  }
+
+  // Hand
+  const handEl = document.getElementById('cbHand');
+  handEl.innerHTML = '';
+  cbHand.forEach((card, idx) => {
+    const canPlay = cbTurn === 'player' && card.cost <= cbPlayerMana && !cbProcessing;
+    const cardEl = document.createElement('div');
+    cardEl.style.cssText = `
+      width:62px; min-height:95px; background:${canPlay ? 'linear-gradient(160deg,#2d1b69,#11073a)' : 'linear-gradient(160deg,#1a1a2e,#0d0d1a)'};
+      border:2px solid ${canPlay ? '#a29bfe' : '#333'}; border-radius:10px; padding:5px 3px;
+      display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+      cursor:${canPlay ? 'pointer' : 'not-allowed'}; opacity:${canPlay ? '1' : '0.5'};
+      transition:transform 0.15s, box-shadow 0.15s; box-shadow:${canPlay ? '0 0 10px rgba(162,155,254,0.4)' : 'none'};
+      font-size:9px; text-align:center; user-select:none;
+    `;
+    cardEl.innerHTML = `
+      <div style="font-size:8px; color:#a29bfe; font-weight:bold;">💎${card.cost}</div>
+      <div style="font-size:24px;">${card.emoji}</div>
+      <div style="font-size:8px; color:white; font-weight:bold; line-height:1.2;">${card.name}</div>
+      <div style="display:flex; gap:3px; font-size:8px;">
+        <span style="color:#ff6b81;">⚔️${card.atk}</span>
+        <span style="color:#00f2ff;">❤️${card.hp}</span>
+      </div>
+      <div style="font-size:7px; color:#aaa; line-height:1.2;">${card.desc}</div>
+    `;
+    if (canPlay) {
+      cardEl.addEventListener('pointerdown', () => {
+        cardEl.classList.add('cb-card-active');
+        cbPlayCard(idx);
+      });
+      cardEl.addEventListener('pointerenter', () => {
+        cardEl.style.transform = 'translateY(-10px) scale(1.08)';
+        cardEl.style.boxShadow = '0 12px 30px rgba(162,155,254,0.7), 0 0 20px rgba(162,155,254,0.4)';
+        cardEl.style.zIndex = '100';
+        playSound(800, 'sine', 0.03);
+      });
+      cardEl.addEventListener('pointerleave', () => {
+        cardEl.style.transform = '';
+        cardEl.style.boxShadow = '0 0 10px rgba(162,155,254,0.4)';
+        cardEl.style.zIndex = '';
+      });
+    }
+    handEl.appendChild(cardEl);
+  });
+
+  // Disable end turn button jika bukan giliran player
+  const endBtn = document.getElementById('cbEndTurnBtn');
+  if (endBtn) endBtn.style.opacity = (cbTurn === 'player' && !cbProcessing) ? '1' : '0.4';
+}
+
+function cbSetLog(msg) {
+  const log = document.getElementById('cbLog');
+  if (log) log.innerHTML = msg;
+}
+
+function cbShowCardSlot(side, card) {
+  const slotId = side === 'player' ? 'cbPlayerSlot' : 'cbEnemySlot';
+  const color = side === 'player' ? '#a29bfe' : '#ff6b81';
+  const slot = document.getElementById(slotId);
+  slot.style.border = `2px solid ${color}`;
+  slot.innerHTML = `
+    <div style="text-align:center; padding:4px;">
+      <div style="font-size:28px;">${card.emoji}</div>
+      <div style="font-size:8px; color:white; font-weight:bold;">${card.name}</div>
+      <div style="font-size:8px; color:#ff6b81;">⚔️${card.atk}</div>
+    </div>
+  `;
+  setTimeout(() => {
+    slot.style.border = `2px dashed rgba(${side==='player'?'0,242,255':'255,107,129'},0.4)`;
+    slot.innerHTML = `<div style="font-size:10px; color:#666;">${side==='player'?'KARTUMU':'KARTU<br>MUSUH'}</div>`;
+  }, 2000);
+}
+
+function cbPlayCard(idx) {
+  if (cbTurn !== 'player' || cbProcessing) return;
+  const card = cbHand[idx];
+  if (card.cost > cbPlayerMana) { cbSetLog('❌ Mana tidak cukup!'); return; }
+
+  cbProcessing = true;
+  cbPlayerMana -= card.cost;
+  cbHand.splice(idx, 1);
+  cbPlayerFieldCard = card;
+  cbShowCardSlot('player', card);
+
+  let logMsg = `🃏 Kamu mainkan <b>${card.emoji} ${card.name}</b> (⚔️${card.atk})!`;
+
+  // Hitung damage
+  let dmg = card.atk;
+  if (cbVoidActive) { dmg = Math.ceil(dmg * 0.5); cbVoidActive = false; }
+
+  // Efek visual + efek kartu
+  fxCardEffect(card.effect, 'player');
+  switch(card.effect) {
+    case 'heal':
+      cbPlayerHp = Math.min(cbPlayerMaxHp, cbPlayerHp + 3);
+      logMsg += ' 💚 Sembuh +3 HP!';
+      break;
+    case 'double':
+      dmg = card.atk * 2;
+      logMsg += ' ⚡ DOUBLE STRIKE!';
+      break;
+    case 'burn':
+      cbBurnTurns = 2;
+      logMsg += ' 🔥 Musuh terbakar 2 giliran!';
+      break;
+    case 'stun':
+      cbStunned = true;
+      logMsg += ' 💫 Musuh terpingsankan!';
+      break;
+    case 'freeze':
+      cbFrozen = true;
+      logMsg += ' 🧊 Musuh dibekukan!';
+      break;
+    case 'shield':
+      cbPlayerShield = 2;
+      logMsg += ' 🛡️ Pelindung +2 HP!';
+      break;
+    case 'dodge':
+      cbPlayerDodge = true;
+      logMsg += ' 💨 Siap menghindari serangan!';
+      break;
+    case 'lifesteal':
+      cbPlayerHp = Math.min(cbPlayerMaxHp, cbPlayerHp + 3);
+      logMsg += ' 🩸 Serap 3 HP!';
+      break;
+    case 'copy':
+      if (cbLastEnemyEffect) { logMsg += ` 📖 Salin efek: ${cbLastEnemyEffect}!`; }
+      break;
+    case 'void':
+      cbVoidActive = true;
+      logMsg += ' 🔵 Serangan musuh 50% giliran ini!';
+      break;
+    case 'meteor':
+      dmg = card.atk;
+      logMsg += ' ☄️ METEOR CRASH!';
+      break;
+    case 'taunt':
+      cbTauntCard = card;
+      logMsg += ' 📣 Provokasi aktif!';
+      break;
+  }
+
+  // Damage ke musuh
+  cbEnemyHp -= dmg;
+  playSound(600, 'square', 0.1);
+  cbSetLog(logMsg + ` 💥 Musuh -${dmg} HP!`);
+
+  setTimeout(() => {
+    cbCheckWin();
+    cbDrawCard();
+    cbProcessing = false;
+    cbUpdateUI();
+  }, 800);
+}
+
+function cbEndTurn() {
+  if (cbTurn !== 'player' || cbProcessing) return;
+  cbTurn = 'enemy';
+  cbUpdateUI();
+  setTimeout(() => cbEnemyTurn(), 1000);
+}
+
+function cbEnemyTurn() {
+  if (cbEnemyHp <= 0) { cbCheckWin(); return; }
+
+  // Burn damage ke musuh
+  if (cbBurnTurns > 0) {
+    cbEnemyHp -= 2;
+    cbBurnTurns--;
+    cbSetLog(`🔥 Musuh terbakar! -2 HP!`);
+    if (cbEnemyHp <= 0) { setTimeout(() => cbCheckWin(), 500); return; }
+  }
+
+  // Musuh skip jika stunned/frozen
+  if (cbStunned) {
+    cbStunned = false;
+    cbSetLog(`💫 ${cbCurrentEnemy.name} terpingsankan! Skip giliran!`);
+    setTimeout(() => cbStartPlayerTurn(), 1200);
+    return;
+  }
+  if (cbFrozen) {
+    cbFrozen = false;
+    cbSetLog(`🧊 ${cbCurrentEnemy.name} membeku! Skip giliran!`);
+    setTimeout(() => cbStartPlayerTurn(), 1200);
+    return;
+  }
+
+  // Pilih kartu musuh
+  let eCard = cbEnemyDeck.length > 0
+    ? {...cbEnemyDeck[Math.floor(Math.random() * cbEnemyDeck.length)]}
+    : {...CB_CARDS[Math.floor(Math.random() * CB_CARDS.length)]};
+  cbLastEnemyEffect = eCard.effect;
+  cbEnemyFieldCard = eCard;
+  cbShowCardSlot('enemy', eCard);
+  fxCardEffect(eCard.effect, 'enemy');
+
+  let eDmg = Math.round(eCard.atk * cbCurrentEnemy.power);
+  let logMsg = `${cbCurrentEnemy.emoji} <b>${cbCurrentEnemy.name}</b> mainkan <b>${eCard.emoji} ${eCard.name}</b> (⚔️${eDmg})!`;
+
+  // Efek musuh
+  switch(eCard.effect) {
+    case 'heal': cbEnemyHp = Math.min(cbEnemyMaxHp, cbEnemyHp + 3); logMsg += ' 💚 Musuh sembuh +3 HP!'; break;
+    case 'burn': cbBurnTurns = 0; break; // Burn pada player
+    case 'lifesteal': cbEnemyHp = Math.min(cbEnemyMaxHp, cbEnemyHp + 2); logMsg += ' 🩸 Musuh serap 2 HP!'; break;
+    case 'double': eDmg = eCard.atk * 2; logMsg += ' ⚡ DOUBLE STRIKE musuh!'; break;
+    case 'void': cbVoidActive = true; break;
+  }
+
+  // Dodge check
+  if (cbPlayerDodge && Math.random() < 0.5) {
+    cbPlayerDodge = false;
+    logMsg += ' 💨 Seranganmu DIHINDARI!';
+    eDmg = 0;
+  } else {
+    cbPlayerDodge = false;
+  }
+
+  // Shield check
+  if (cbPlayerShield > 0) {
+    const blocked = Math.min(cbPlayerShield, eDmg);
+    eDmg -= blocked;
+    cbPlayerShield -= blocked;
+    if (blocked > 0) logMsg += ` 🛡️ Pelindung blokir ${blocked} dmg!`;
+  }
+
+  cbPlayerHp -= eDmg;
+  if (eDmg > 0) {
+    logMsg += ` 💥 Kamu -${eDmg} HP!`;
+    fxFloatDmg(window.innerHeight * 0.7, `-${eDmg} HP`, '#ff6b81');
+    fxShockwave(window.innerWidth/2, window.innerHeight*0.75, '#ff4757');
+    playSound(200, 'sawtooth', 0.1);
+  }
+  cbSetLog(logMsg);
+
+  setTimeout(() => {
+    cbCheckWin();
+    cbStartPlayerTurn();
+  }, 1200);
+}
+
+function cbStartPlayerTurn() {
+  if (gameOver) return;
+  cbTurn = 'player';
+  cbRound++;
+  cbPlayerMana = Math.min(cbManaMax, cbPlayerMana + cbManaMax); // Isi ulang mana
+  cbPlayerMana = cbManaMax;
+  cbDrawCard();
+  cbSetLog(`🌟 Giliran #${cbRound} - Mana terisi! Pilih kartumu!`);
+  cbUpdateUI();
+}
+
+function cbCheckWin() {
+  if (cbEnemyHp <= 0 && !gameOver) {
+    const earned = currentDifficulty === 'insane' ? 500 : currentDifficulty === 'hard' ? 300 : 150;
+    score += earned;
+    xp += Math.floor(earned / 2);
+    updateLevel();
+    coins += Math.floor(earned / 10);
+    localStorage.setItem('gameDexCoins', coins);
+    cbSetLog(`🏆 <b>KAMU MENANG!</b> +${earned} SKOR!`);
+    fxSkillText('🏆 VICTORY! 🏆', '#ffd700', `+${earned} SKOR`);
+    fxBurstParticles(window.innerWidth/2, window.innerHeight/2, '#ffd700', 40, ['🏆','⭐','✨','🎉']);
+    fxScreenFlash('rgba(255,215,0,0.4)', 400);
+    playSound(880, 'sine', 0.15);
+    setTimeout(() => endGame(), 2000);
+    return true;
+  }
+  if (cbPlayerHp <= 0 && !gameOver) {
+    cbSetLog(`💀 <b>KAMU KALAH...</b> ${cbCurrentEnemy.emoji} ${cbCurrentEnemy.name} menang!`);
+    fxSkillText('💀 DEFEAT', '#ff4757', cbCurrentEnemy.name + ' MENANG');
+    fxScreenFlash('rgba(255,0,0,0.4)', 500);
+    playSound(100, 'sawtooth', 0.15);
+    setTimeout(() => endGame(), 2000);
+    return true;
+  }
+  return false;
+}
+// ============================================================
+//  END CARD BATTLE
+// ============================================================
 
 // ============================================================
 //  CLIENT-SIDE SECURITY LAYER - Game Dex Pro Edition
