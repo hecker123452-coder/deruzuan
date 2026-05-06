@@ -593,6 +593,111 @@ button:hover {
 .fade-in { animation: fadeIn 0.4s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+/* ===== LOBBY REDESIGN CSS ===== */
+@keyframes titleShimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes floatY {
+  0%,100% { transform: translateY(0px); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+@keyframes borderGlow {
+  0%,100% { border-color: rgba(0,242,255,0.3); box-shadow: 0 0 8px var(--glow); }
+  50%      { border-color: rgba(0,242,255,0.7); box-shadow: 0 0 20px var(--glow), 0 0 40px var(--glow); }
+}
+@keyframes cardEntrance {
+  0%   { opacity:0; transform:translateY(20px) scale(0.95); }
+  100% { opacity:1; transform:translateY(0) scale(1); }
+}
+
+.lobby-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, rgba(var(--c1-rgb,0,176,155),0.15), rgba(0,0,0,0.4));
+  background: linear-gradient(135deg, color-mix(in srgb,var(--c1) 20%,transparent), rgba(0,0,0,0.5));
+  color: white;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  text-align: left;
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  position: relative;
+  overflow: hidden;
+  animation: cardEntrance 0.4s ease-out both;
+  backdrop-filter: blur(6px);
+}
+.lobby-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--c1), var(--c2));
+  opacity: 0;
+  transition: opacity 0.2s;
+  border-radius: inherit;
+}
+.lobby-card:active::before { opacity: 0.3; }
+.lobby-card:active { transform: scale(0.96); }
+
+/* Hover hanya di desktop */
+@media (hover: hover) {
+  .lobby-card:hover {
+    transform: translateY(-3px) scale(1.02);
+    border-color: rgba(0,242,255,0.5);
+    box-shadow: 0 8px 24px var(--glow), 0 0 0 1px rgba(255,255,255,0.08);
+  }
+}
+
+.lobby-featured {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, color-mix(in srgb,var(--c1) 25%,transparent), rgba(0,0,0,0.5));
+  border: 1px solid color-mix(in srgb,var(--c1) 50%,transparent);
+  box-shadow: 0 0 20px var(--glow);
+  animation: borderGlow 3s ease-in-out infinite;
+}
+
+.lobby-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 0 6px currentColor);
+  flex-shrink: 0;
+  animation: floatY 3s ease-in-out infinite;
+}
+.lobby-title {
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: white;
+  display: block;
+}
+.lobby-sub {
+  font-size: 7px;
+  opacity: 0.6;
+  letter-spacing: 1px;
+  font-family: 'Poppins', sans-serif;
+  color: #ccc;
+}
+
+/* Shimmer line on lobby cards */
+.lobby-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -60%;
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  transform: skewX(-15deg);
+  transition: left 0.5s;
+}
+.lobby-card:active::after { left: 120%; }
+
 /* ===== EFEK VISUAL ANIME BATTLE & CARD BATTLE ===== */
 @keyframes skillText {
   0%   { opacity:0; transform: translate(-50%,-50%) scale(0.3) rotate(-10deg); }
@@ -630,6 +735,70 @@ button:hover {
   0%   { transform: rotateY(0deg) scale(1); }
   50%  { transform: rotateY(90deg) scale(1.1); }
   100% { transform: rotateY(0deg) scale(1); }
+}
+
+/* ===== PLANE SKILL EFFECTS ===== */
+@keyframes sonicRing {
+  0%   { transform:translate(-50%,-50%) scale(0); opacity:1; border-width:6px; }
+  100% { transform:translate(-50%,-50%) scale(8); opacity:0; border-width:1px; }
+}
+@keyframes beamPulse {
+  0%,100% { opacity:0.7; filter:blur(8px); }
+  50%      { opacity:1; filter:blur(4px) brightness(1.5); }
+}
+@keyframes gravityFreeze {
+  0%   { filter:hue-rotate(0deg) brightness(1); }
+  50%  { filter:hue-rotate(180deg) brightness(2); }
+  100% { filter:hue-rotate(360deg) brightness(1); }
+}
+@keyframes thrusterFlame {
+  0%   { transform:scaleY(1) scaleX(1); opacity:1; }
+  50%  { transform:scaleY(1.4) scaleX(0.8); opacity:0.8; }
+  100% { transform:scaleY(0.6) scaleX(1.2); opacity:0.6; }
+}
+@keyframes phantomTrail {
+  0%   { opacity:0.6; transform:scale(1); }
+  100% { opacity:0; transform:scale(2); }
+}
+@keyframes midasGlow {
+  0%,100% { box-shadow:0 0 10px #f1c40f, 0 0 20px #f1c40f; }
+  50%      { box-shadow:0 0 30px #ffd700, 0 0 60px #ffd700, 0 0 90px #ffd700; }
+}
+@keyframes phoenixRise {
+  0%   { transform:scale(0) rotate(-180deg); opacity:0; }
+  60%  { transform:scale(1.3) rotate(10deg); opacity:1; }
+  100% { transform:scale(1) rotate(0deg); opacity:1; }
+}
+@keyframes skillCooldown {
+  0%   { width:100%; }
+  100% { width:0%; }
+}
+.plane-skill-banner {
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  font-family:'Orbitron',sans-serif; font-weight:900;
+  font-size:clamp(16px,5vw,28px); text-align:center;
+  pointer-events:none; z-index:9000;
+  padding:10px 24px; border-radius:12px;
+  animation: skillText 1.6s ease-out forwards;
+  border:2px solid currentColor;
+  backdrop-filter:blur(4px);
+  text-shadow: 0 0 20px currentColor;
+  box-shadow: 0 0 30px currentColor, inset 0 0 20px rgba(0,0,0,0.5);
+}
+.skill-cooldown-bar {
+  position:fixed; bottom:60px; left:50%; transform:translateX(-50%);
+  width:160px; height:4px; background:rgba(255,255,255,0.1);
+  border-radius:2px; pointer-events:none; z-index:200;
+}
+.skill-cooldown-fill {
+  height:100%; border-radius:2px;
+  animation: skillCooldown var(--cd) linear forwards;
+}
+.sonic-ring {
+  position:fixed; pointer-events:none; z-index:8990;
+  width:60px; height:60px; border-radius:50%;
+  border:6px solid currentColor;
+  animation: sonicRing 0.5s ease-out forwards;
 }
 @keyframes cardSlam {
   0%   { transform: translateY(-120px) scale(1.3) rotate(-5deg); opacity:0; }
@@ -750,60 +919,158 @@ button:hover {
 
 <body class="map-default">
 
-<!-- LOBBY -->
-<div id="lobby" class="menu-overlay">
-  <div style="text-align: center; margin-bottom: 30px;" class="fade-in">
-    <h1 class="premium-glow" style="display: inline-block; padding: 10px 20px; color: var(--primary); font-family: 'Orbitron'; font-size: clamp(40px, 10vw, 60px); margin: 0; text-shadow: 0 0 15px var(--primary), 0 0 30px var(--primary); letter-spacing: 8px; border-radius: 15px;">GAME <span style="color: white; text-shadow: 0 0 10px white;">DEX</span></h1>
-    <div style="background: rgba(0,242,255,0.1); padding: 5px 15px; border-radius: 20px; display: inline-block; margin-top: 10px;">
-      <div id="playerLevel" style="font-size: 10px; color: var(--primary); font-weight: bold; letter-spacing: 2px;">LEVEL 1 EXPLORER</div>
+<!-- ===================== LOBBY REDESIGN ===================== -->
+<canvas id="lobbyCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+
+<div id="lobby" class="menu-overlay" style="background:transparent;overflow-y:auto;overflow-x:hidden;">
+
+  <!-- HEADER -->
+  <div style="position:relative;text-align:center;padding:24px 16px 0;z-index:2;width:100%;">
+
+    <!-- Logo -->
+    <div style="position:relative;display:inline-block;margin-bottom:6px;">
+      <div style="position:absolute;inset:-10px;background:radial-gradient(ellipse,rgba(0,242,255,0.18) 0%,transparent 70%);border-radius:50%;animation:pulse 2s infinite;pointer-events:none;"></div>
+      <h1 style="font-family:'Orbitron';font-size:clamp(36px,11vw,64px);margin:0;letter-spacing:10px;
+        background:linear-gradient(135deg,#00f2ff 0%,#fff 40%,#a29bfe 70%,#00f2ff 100%);
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+        filter:drop-shadow(0 0 18px rgba(0,242,255,0.6));animation:titleShimmer 4s linear infinite;">
+        GAME<span style="letter-spacing:4px;">DEX</span>
+      </h1>
+      <div style="font-size:8px;letter-spacing:6px;color:rgba(0,242,255,0.6);margin-top:-4px;font-family:'Orbitron';">PRO EDITION v2.0</div>
     </div>
-    <br>
+
+    <!-- Owner badge -->
     <div id="ownerBadge" class="badge-owner">👑 VERIFIED OWNER</div>
-    <div id="levelBarContainer" style="width: 200px; margin: 10px auto;"><div id="levelBar"></div></div>
-  </div>
 
-  <div id="highScoreDisplay" style="color: var(--accent); font-size: 14px; margin-bottom: 5px; letter-spacing: 3px; font-weight: bold; text-shadow: 0 0 10px rgba(241,196,15,0.3);">🏆 HIGH SCORE: 0</div>
-  <div style="font-size: 8px; color: #555; margin-bottom: 15px; letter-spacing: 1px;">🔥 PHONK MUSIC ACTIVE</div>
-  
-  <div id="arenaSelect" style="display: flex; gap: 10px; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);">
-    <button id="btn-arena-default" onclick="setArena('default')" style="font-size: 9px; padding: 8px 15px; border-radius: 40px; border: 1px solid var(--primary); background: rgba(0,242,255,0.2);">GRID</button>
-    <button id="btn-arena-neon" onclick="setArena('neon')" style="font-size: 9px; padding: 8px 15px; border-radius: 40px; border: none; background: transparent;">NEON</button>
-    <button id="btn-arena-space" onclick="setArena('space')" style="font-size: 9px; padding: 8px 15px; border-radius: 40px; border: none; background: transparent;">SPACE</button>
-  </div>
-
-  <div id="modeSelect" class="btn-group fade-in">
-    <button class="btn-normal" onclick="setMode('plane')">✈️ PLANE<br><small style="font-size: 7px; opacity: 0.6;">AERO STRIKE</small></button>
-    <button class="btn-hard" onclick="setMode('snake')">🐍 SNAKE<br><small style="font-size: 7px; opacity: 0.6;">NEON COBRA</small></button>
-    <button class="btn-insane" onclick="setMode('chess')">♟️ CHESS AI<br><small style="font-size: 7px; opacity: 0.6;">GRANDMASTER</small></button>
-    <button class="btn-insane" style="background: linear-gradient(135deg, #00d2ff, #3a7bd5);" onclick="setMode('block')">🧱 BLOCKS<br><small style="font-size: 7px; opacity: 0.6;">GRID BLAST</small></button>
-    <button class="btn-hard" style="background: linear-gradient(135deg, #FF0099, #493240);" onclick="setMode('flappy')">🚀 FLAPPY<br><small style="font-size: 7px; opacity: 0.6;">CYBER FLAP</small></button>
-    <button class="btn-normal" style="background: linear-gradient(135deg, #1D976C, #93F9B9);" onclick="setMode('tiles')">⚡ TILES<br><small style="font-size: 7px; opacity: 0.6;">SONIC TAP</small></button>
-    
-    <button class="btn-insane btn-full" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);" onclick="setMode('ballbattle')">🔮 ANIME BATTLE<br><small style="font-size: 8px; opacity: 0.8;">DOMAIN EXPANSION & SKILLS</small></button>
-    <button class="btn-insane btn-full" style="background: linear-gradient(135deg, #c0392b, #8e44ad);" onclick="setMode('cardbattle')">🃏 CARD BATTLE<br><small style="font-size: 8px; opacity: 0.8;">DUEL ANIME CARDS</small></button>
-    <button class="btn-insane btn-full" style="background: linear-gradient(135deg, #c0392b, #8e44ad);" onclick="setMode('cardbattle')">🃏 CARD BATTLE<br><small style="font-size: 8px; opacity: 0.8;">DUEL ANIME CARDS</small></button>
-    
-    <button class="btn-settings" style="background: #f39c12;" onclick="showShop()">🛒 SHOP</button>
-    <button class="btn-settings" onclick="toggleSettings()">⚙️ SETTINGS</button>
-    <button id="installBtn" onclick="installApp()" style="display: none; background: #3498db; margin-top: 5px; animation: pulse 1.5s infinite;">📲 INSTALL APP KE HP</button>
-    <button id="dailyBtn" onclick="claimDaily()" style="background: #27ae60; font-size: 10px; display: none;">🎁 KLAIM HADIAH HARIAN!</button>
-  </div>
-
-  <div id="diffSelect" class="btn-group" style="display: none;">
-    <p style="color: white; text-align: center; grid-column: span 2; font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px;">SELECT DIFFICULTY</p>
-    <button class="btn-normal" onclick="startGame('normal')">NORMAL</button>
-    <button class="btn-hard" onclick="startGame('hard')">HARD</button>
-    <button class="btn-insane" onclick="startGame('insane')">INSANE</button>
-    <button class="btn-back" onclick="showModeSelect()">BACK</button>
-  </div>
-
-  <div id="charSelect" class="menu-overlay" style="display: none;">
-    <div class="btn-group fade-in" style="max-width: 450px; grid-template-columns: 1fr;">
-      <h2 style="color: var(--primary); font-family: 'Orbitron'; text-align: center; margin: 0 0 10px 0;">CHOOSE YOUR HERO</h2>
-      <div id="charGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; width: 100%;">
-        <!-- Generated by JS -->
+    <!-- Player card -->
+    <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(0,242,255,0.06);
+      border:1px solid rgba(0,242,255,0.2);border-radius:16px;padding:8px 16px;margin:8px auto 0;
+      backdrop-filter:blur(10px);box-shadow:0 0 20px rgba(0,242,255,0.08);">
+      <div style="font-size:22px;">🎮</div>
+      <div style="text-align:left;">
+        <div id="playerLevel" style="font-size:10px;color:#00f2ff;font-weight:bold;letter-spacing:2px;font-family:'Orbitron';">LEVEL 1 EXPLORER</div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:4px;width:120px;height:5px;margin-top:4px;overflow:hidden;">
+          <div id="levelBar" style="height:100%;background:linear-gradient(90deg,#00f2ff,#a29bfe);border-radius:4px;transition:width 0.5s;width:0%;box-shadow:0 0 8px #00f2ff;"></div>
+        </div>
       </div>
-      <button class="btn-back btn-full" onclick="showModeSelect()" style="margin-top: 10px;">KEMBALI</button>
+      <div style="text-align:right;">
+        <div id="highScoreDisplay" style="font-size:10px;color:#f1c40f;font-weight:bold;letter-spacing:1px;">🏆 0</div>
+        <div id="lobbyCoins" style="font-size:9px;color:#f39c12;">💰 0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARENA SELECTOR -->
+  <div style="display:flex;gap:6px;justify-content:center;margin:12px 0 8px;z-index:2;position:relative;">
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:40px;padding:5px;display:flex;gap:4px;backdrop-filter:blur(8px);">
+      <button id="btn-arena-default" onclick="setArena('default')" style="font-size:8px;padding:6px 12px;border-radius:30px;border:1px solid #00f2ff;background:rgba(0,242,255,0.15);color:#00f2ff;font-family:'Orbitron';letter-spacing:1px;">⚡ GRID</button>
+      <button id="btn-arena-neon" onclick="setArena('neon')" style="font-size:8px;padding:6px 12px;border-radius:30px;border:none;background:transparent;color:#aaa;font-family:'Orbitron';letter-spacing:1px;">🌈 NEON</button>
+      <button id="btn-arena-space" onclick="setArena('space')" style="font-size:8px;padding:6px 12px;border-radius:30px;border:none;background:transparent;color:#aaa;font-family:'Orbitron';letter-spacing:1px;">🌌 SPACE</button>
+    </div>
+  </div>
+
+  <!-- GAME MODES -->
+  <div id="modeSelect" style="width:100%;max-width:400px;margin:0 auto;padding:0 12px;z-index:2;position:relative;display:grid;gap:8px;">
+
+    <!-- Section label -->
+    <div style="text-align:center;font-size:8px;letter-spacing:4px;color:rgba(0,242,255,0.5);font-family:'Orbitron';margin:4px 0 2px;">— SELECT GAME —</div>
+
+    <!-- Row 1: 2 col -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <button onclick="setMode('plane')" class="lobby-card" style="--c1:#00b09b;--c2:#00f2ff;--glow:rgba(0,242,255,0.3);">
+        <span class="lobby-icon">✈️</span>
+        <span class="lobby-title">PLANE</span>
+        <span class="lobby-sub">AERO STRIKE</span>
+      </button>
+      <button onclick="setMode('snake')" class="lobby-card" style="--c1:#f83600;--c2:#f9d423;--glow:rgba(249,212,35,0.3);">
+        <span class="lobby-icon">🐍</span>
+        <span class="lobby-title">SNAKE</span>
+        <span class="lobby-sub">NEON COBRA</span>
+      </button>
+    </div>
+
+    <!-- Row 2: 2 col -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <button onclick="setMode('chess')" class="lobby-card" style="--c1:#8E2DE2;--c2:#4A00E0;--glow:rgba(142,45,226,0.3);">
+        <span class="lobby-icon">♟️</span>
+        <span class="lobby-title">CHESS</span>
+        <span class="lobby-sub">GRANDMASTER</span>
+      </button>
+      <button onclick="setMode('block')" class="lobby-card" style="--c1:#00d2ff;--c2:#3a7bd5;--glow:rgba(0,210,255,0.3);">
+        <span class="lobby-icon">🧱</span>
+        <span class="lobby-title">BLOCKS</span>
+        <span class="lobby-sub">GRID BLAST</span>
+      </button>
+    </div>
+
+    <!-- Row 3: 2 col -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <button onclick="setMode('flappy')" class="lobby-card" style="--c1:#FF0099;--c2:#493240;--glow:rgba(255,0,153,0.3);">
+        <span class="lobby-icon">🚀</span>
+        <span class="lobby-title">FLAPPY</span>
+        <span class="lobby-sub">CYBER FLAP</span>
+      </button>
+      <button onclick="setMode('tiles')" class="lobby-card" style="--c1:#1D976C;--c2:#93F9B9;--glow:rgba(29,151,108,0.3);">
+        <span class="lobby-icon">⚡</span>
+        <span class="lobby-title">TILES</span>
+        <span class="lobby-sub">SONIC TAP</span>
+      </button>
+    </div>
+
+    <!-- Row 4: Full width featured -->
+    <button onclick="setMode('ballbattle')" class="lobby-card lobby-featured" style="--c1:#6c5ce7;--c2:#a29bfe;--glow:rgba(108,92,231,0.4);">
+      <span class="lobby-icon">🔮</span>
+      <div>
+        <span class="lobby-title">ANIME BATTLE</span>
+        <span class="lobby-sub" style="display:block;">DOMAIN EXPANSION & SKILLS</span>
+      </div>
+      <span style="font-size:8px;background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:10px;margin-left:auto;color:#fff;letter-spacing:1px;">HOT 🔥</span>
+    </button>
+
+    <button onclick="setMode('cardbattle')" class="lobby-card lobby-featured" style="--c1:#c0392b;--c2:#8e44ad;--glow:rgba(192,57,43,0.4);">
+      <span class="lobby-icon">🃏</span>
+      <div>
+        <span class="lobby-title">CARD BATTLE</span>
+        <span class="lobby-sub" style="display:block;">DUEL ANIME CARDS</span>
+      </div>
+      <span style="font-size:8px;background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:10px;margin-left:auto;color:#fff;letter-spacing:1px;">NEW ✨</span>
+    </button>
+
+    <!-- Section label -->
+    <div style="text-align:center;font-size:8px;letter-spacing:4px;color:rgba(255,255,255,0.2);font-family:'Orbitron';margin:2px 0 0;">— MORE —</div>
+
+    <!-- Bottom row: Shop + Settings + Extras -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <button onclick="showShop()" class="lobby-card" style="--c1:#f39c12;--c2:#e67e22;--glow:rgba(243,156,18,0.3);">
+        <span class="lobby-icon" style="font-size:20px;">🛒</span>
+        <span class="lobby-title" style="font-size:9px;">SHOP</span>
+      </button>
+      <button onclick="toggleSettings()" class="lobby-card" style="--c1:#636e72;--c2:#2d3436;--glow:rgba(99,110,114,0.3);">
+        <span class="lobby-icon" style="font-size:20px;">⚙️</span>
+        <span class="lobby-title" style="font-size:9px;">SETTINGS</span>
+      </button>
+    </div>
+
+    <button id="installBtn" onclick="installApp()" style="display:none;background:linear-gradient(135deg,#3498db,#2980b9);color:white;border:none;padding:12px;border-radius:14px;font-family:'Orbitron';font-size:10px;letter-spacing:2px;animation:pulse 1.5s infinite;cursor:pointer;">📲 INSTALL APP</button>
+    <button id="dailyBtn" onclick="claimDaily()" style="display:none;background:linear-gradient(135deg,#27ae60,#2ecc71);color:white;border:none;padding:12px;border-radius:14px;font-family:'Orbitron';font-size:10px;letter-spacing:2px;cursor:pointer;">🎁 DAILY REWARD!</button>
+
+    <div style="height:20px;"></div>
+  </div>
+
+  <!-- DIFFICULTY SELECT -->
+  <div id="diffSelect" class="btn-group" style="display:none;position:relative;z-index:2;">
+    <p style="color:white;text-align:center;grid-column:span 2;font-family:'Orbitron';font-size:10px;letter-spacing:3px;margin-bottom:8px;">⚔️ SELECT DIFFICULTY</p>
+    <button class="btn-normal" onclick="startGame('normal')">✅ NORMAL</button>
+    <button class="btn-hard" onclick="startGame('hard')">💀 HARD</button>
+    <button class="btn-insane" style="grid-column:span 2;" onclick="startGame('insane')">☠️ INSANE MODE</button>
+    <button class="btn-back" style="grid-column:span 2;" onclick="showModeSelect()">← BACK</button>
+  </div>
+
+  <div id="charSelect" class="menu-overlay" style="display:none;">
+    <div class="btn-group fade-in" style="max-width:450px;grid-template-columns:1fr;">
+      <h2 style="color:var(--primary);font-family:'Orbitron';text-align:center;margin:0 0 10px 0;">CHOOSE YOUR HERO</h2>
+      <div id="charGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0;width:100%;"></div>
+      <button class="btn-back btn-full" onclick="showModeSelect()" style="margin-top:10px;">← KEMBALI</button>
     </div>
   </div>
 </div>
@@ -1378,71 +1645,152 @@ function triggerUltimate() {
 
     if (skin === 'Default') {
       // Sonic Wave: Instant area wipe
+      const px = parseFloat(player.style.left) + 25, py = window.innerHeight - 130;
+      fxPlaneBanner('〜 SONIC WAVE 〜', '#00f2ff', 'AREA CLEARED');
+      fxSonicRings(px, py, '#00f2ff', 6);
+      fxScreenFlash('rgba(0,242,255,0.25)', 250);
+      fxBurstParticles(px, py, '#00f2ff', 20, ['💥','⭐','✨']);
       document.querySelectorAll('.obstacle, .enemy-plane').forEach(o => {
-        if (Math.abs(o.offsetLeft - x) < 300) { 
-          createParticles(o.offsetLeft, o.offsetTop, '#fff'); 
-          o.remove(); score += 5; 
+        if (Math.abs(o.offsetLeft - x) < 300) {
+          fxShockwave(o.offsetLeft, o.offsetTop, '#00f2ff');
+          createParticles(o.offsetLeft, o.offsetTop, '#00f2ff');
+          o.remove(); score += 5;
         }
       });
     } else if (skin === 'UFO') {
-      // Gravity Freeze: Menghentikan pergerakan semua objek selama 4 detik
+      // Gravity Freeze
+      const px2 = parseFloat(player.style.left) + 25, py2 = window.innerHeight - 130;
+      fxPlaneBanner('🛸 GRAVITY FREEZE', '#a29bfe', 'TIME STOPPED');
+      fxGravityWave(px2, py2);
+      fxBurstParticles(px2, py2, '#a29bfe', 20, ['🔵','💠','🌀','⭐']);
+      fxScreenFlash('rgba(162,155,254,0.3)', 300);
       isSlowMo = true;
       const obstacles = document.querySelectorAll('.obstacle, .enemy-plane');
-      obstacles.forEach(o => o.style.filter = "brightness(2) hue-rotate(180deg)");
-      
+      obstacles.forEach(o => {
+        o.style.filter = "brightness(2) hue-rotate(180deg)";
+        o.style.transition = "filter 0.5s";
+      });
       const originalSpeed = config[currentDifficulty].speedBase;
-      config[currentDifficulty].speedBase = 0; // Freeze movement logic
-      
-      setTimeout(() => { 
-        isSlowMo = false; 
+      config[currentDifficulty].speedBase = 0;
+      setTimeout(() => {
+        isSlowMo = false;
         config[currentDifficulty].speedBase = originalSpeed;
-        document.querySelectorAll('.obstacle, .enemy-plane').forEach(o => o.style.filter = "");
+        document.querySelectorAll('.obstacle, .enemy-plane').forEach(o => {
+          o.style.filter = "";
+        });
+        fxPlaneBanner('🛸 GRAVITY RESTORED', '#a29bfe', '');
       }, 4000);
     } else if (skin === 'Rocket') {
+      const px3 = parseFloat(player.style.left) + 25, py3 = window.innerHeight - 130;
+      fxPlaneBanner('🚀 NITRO BOOST!', '#ff6b35', 'FULL THROTTLE');
+      fxThrusterTrail(5000);
+      fxBurstParticles(px3, py3, '#ff6b35', 25, ['🔥','💥','⚡','🚀']);
+      fxShockwave(px3, py3, '#ff6b35');
+      fxScreenFlash('rgba(255,107,53,0.3)', 200);
       isSlowMo = true; shield++; player.classList.add('shield-active');
-      setTimeout(() => { 
-        isSlowMo = false; shield = Math.max(0, shield-1); 
-        if(shield === 0) player.classList.remove('shield-active'); 
+      setTimeout(() => {
+        isSlowMo = false; shield = Math.max(0, shield-1);
+        if(shield === 0) player.classList.remove('shield-active');
+        fxPlaneBanner('🚀 BOOST END', '#ff6b35', '');
       }, 5000);
     } else if (skin === 'Dragon') {
+      const px4 = parseFloat(player.style.left) + 25;
+      fxPlaneBanner('🐉 INFERNO BEAM', '#ff4d00', 'DRAGON BREATH');
+      fxScreenFlash('rgba(255,77,0,0.4)', 200);
+      fxBurstParticles(px4, window.innerHeight-130, '#ff4d00', 20, ['🔥','🐉','💥']);
+      // Beam visual keren - gradient dengan glow
       const beam = document.createElement('div');
-      beam.style.cssText = `position:fixed; top:0; width:100px; height:100vh; background:linear-gradient(90deg, transparent, #ff4d00, #ffae00, #ff4d00, transparent); z-index:18; filter:blur(10px); opacity:0.9; pointer-events:none;`;
+      beam.style.cssText = `position:fixed;top:0;width:90px;height:100vh;
+        background:linear-gradient(180deg,rgba(255,200,0,0.1),rgba(255,77,0,0.9),rgba(255,200,0,0.1));
+        z-index:18;filter:blur(6px);pointer-events:none;
+        box-shadow:0 0 30px #ff4d00,0 0 60px #ff6b00;
+        animation:beamPulse 0.3s ease-in-out infinite;`;
+      // Core beam tipis
+      const beamCore = document.createElement('div');
+      beamCore.style.cssText = `position:fixed;top:0;width:20px;height:100vh;
+        background:linear-gradient(180deg,transparent,#fff,#ffae00,#fff,transparent);
+        z-index:19;pointer-events:none;filter:blur(2px);`;
       document.body.appendChild(beam);
+      document.body.appendChild(beamCore);
       const beamInterval = setInterval(() => {
         const currentX = parseFloat(player.style.left) || x;
-        beam.style.left = (currentX - 25) + "px";
+        beam.style.left = (currentX - 20) + 'px';
+        beamCore.style.left = (currentX + 5) + 'px';
         document.querySelectorAll('.obstacle, .enemy-plane').forEach(o => {
-          if (Math.abs(o.offsetLeft - currentX) < 80) { 
-            createParticles(o.offsetLeft, o.offsetTop, 'orange'); 
+          if (Math.abs(o.offsetLeft - currentX) < 90) {
+            fxShockwave(o.offsetLeft, o.offsetTop, '#ff4d00');
+            createParticles(o.offsetLeft, o.offsetTop, '#ff4d00');
             o.remove(); score += 5; scoreText.innerHTML = score;
           }
         });
       }, 30);
-      setTimeout(() => { clearInterval(beamInterval); beam.remove(); }, 2500);
+      setTimeout(() => {
+        clearInterval(beamInterval);
+        beam.remove(); beamCore.remove();
+        fxPlaneBanner('🐉 INFERNO END', '#ff4d00', '');
+      }, 2500);
     } else if (skin === 'Cyber') {
-      // Magnetic Pulse: Menarik semua bintang ke arah player selama 5 detik
+      const px5 = parseFloat(player.style.left) + 25, py5 = window.innerHeight - 130;
+      fxMagneticPulse(px5, py5);
+      fxThrusterTrail(800);
       const magInterval = setInterval(() => {
         document.querySelectorAll('.star').forEach(s => {
           let sX = parseFloat(s.style.left);
           let sY = parseFloat(s.style.top);
           let pX = parseFloat(player.style.left) || x;
-          s.style.left = (sX + (pX - sX) * 0.2) + "px";
-          s.style.top = (sY + (window.innerHeight - sY) * 0.05) + "px";
+          // Efek tarik dengan trail
+          const nx = sX + (pX - sX) * 0.2;
+          const ny = sY + (window.innerHeight - sY) * 0.06;
+          s.style.left = nx + 'px';
+          s.style.top = ny + 'px';
+          s.style.filter = 'drop-shadow(0 0 6px #00f2ff)';
+          s.style.transition = 'filter 0.3s';
         });
       }, 30);
-      setTimeout(() => clearInterval(magInterval), 5000);
+      setTimeout(() => {
+        clearInterval(magInterval);
+        document.querySelectorAll('.star').forEach(s => s.style.filter = '');
+        fxPlaneBanner('🔵 PULSE END', '#00cec9', '');
+      }, 5000);
     } else if (skin === 'Stealth') {
-      player.style.opacity = "0.2"; shield += 100;
-      setTimeout(() => { player.style.opacity = "1"; shield = Math.max(0, shield-100); if(shield === 0) player.classList.remove('shield-active'); }, 6000);
+      fxStealthMode(true);
+      fxPhantomTrails(6000);
+      player.style.opacity = "0.15";
+      player.style.filter = "hue-rotate(180deg) brightness(2)";
+      shield += 100;
+      const stealthInterval = setInterval(() => {
+        // Efek ghost particles saat stealth
+        if(Math.random() < 0.3) {
+          fxBurstParticles(
+            parseFloat(player.style.left)+20,
+            window.innerHeight-120,
+            '#6c5ce7', 3, ['👻','💨']
+          );
+        }
+      }, 500);
+      setTimeout(() => {
+        clearInterval(stealthInterval);
+        player.style.opacity = "1";
+        player.style.filter = "";
+        shield = Math.max(0, shield-100);
+        if(shield === 0) player.classList.remove('shield-active');
+        fxPlaneBanner('👻 PHASE END', '#6c5ce7', 'VISIBLE AGAIN');
+      }, 6000);
     } else if (skin === 'Phantom') {
-      // Spectral Dash: Menjadi transparan dan bisa menembus objek (Invulnerable + Auto Points)
-      player.style.filter = "invert(1) opacity(0.5)";
-      shield += 999; // Sangat tinggi agar tidak bisa mati
+      const px6 = parseFloat(player.style.left)+25, py6 = window.innerHeight-130;
+      fxPlaneBanner('👁️ SPECTRAL DASH', '#9b59b6', 'PHASE THROUGH ALL');
+      fxPhantomTrails(5000);
+      fxBurstParticles(px6, py6, '#9b59b6', 25, ['👻','💜','✨','🌀']);
+      fxShockwave(px6, py6, '#9b59b6');
+      fxScreenFlash('rgba(155,89,182,0.3)', 200);
+      player.style.filter = "invert(1) drop-shadow(0 0 10px #9b59b6) opacity(0.5)";
+      shield += 999;
       const dashInterval = setInterval(() => {
         document.querySelectorAll('.obstacle, .enemy-plane').forEach(o => {
           let pRect = player.getBoundingClientRect();
           let oRect = o.getBoundingClientRect();
           if (pRect.left < oRect.right && pRect.right > oRect.left && pRect.top < oRect.bottom && pRect.bottom > oRect.top) {
+            fxShockwave(o.offsetLeft, o.offsetTop, '#9b59b6');
             createParticles(o.offsetLeft, o.offsetTop, '#9b59b6');
             o.remove();
             score += 50; scoreText.innerHTML = score;
@@ -1450,34 +1798,38 @@ function triggerUltimate() {
           }
         });
       }, 50);
-      setTimeout(() => { 
-        clearInterval(dashInterval); 
-        shield = 0; 
-        player.style.filter = ""; 
+      setTimeout(() => {
+        clearInterval(dashInterval);
+        shield = 0; player.style.filter = "";
+        fxPlaneBanner('👁️ SPECTRAL END', '#9b59b6', '');
       }, 5000);
     } else if (skin === 'Gold') {
-      // Midas Burst: Mengubah semua meteor yang ada di layar menjadi Bintang Emas!
+      const px7 = parseFloat(player.style.left)+25, py7 = window.innerHeight-130;
+      fxMidasTouch(px7, py7);
       document.querySelectorAll('.obstacle').forEach(o => {
+        // Efek transform: meteor → bintang emas
+        fxShockwave(o.offsetLeft, o.offsetTop, '#f1c40f');
+        fxBurstParticles(o.offsetLeft, o.offsetTop, '#f1c40f', 8, ['⭐','✨','💰']);
         const s = document.createElement('div');
         s.innerHTML = "⭐";
         s.className = "star";
         s.style.left = o.style.left;
         s.style.top = o.style.top;
+        s.style.filter = "drop-shadow(0 0 8px gold)";
+        s.style.fontSize = "24px";
         document.getElementById('gameUI').appendChild(s);
-        
         createParticles(o.offsetLeft, o.offsetTop, '#f1c40f');
         o.remove();
-        
-        // Animasi jatuh bintang khusus
         let sy = parseFloat(s.style.top);
         let sFall = setInterval(() => {
           if (gameOver || isPaused) return;
           sy += 10;
-          s.style.top = sy + "px";
+          s.style.top = sy + 'px';
           let pR = player.getBoundingClientRect();
           let sR = s.getBoundingClientRect();
           if (pR.left < sR.right && pR.right > sR.left && pR.top < sR.bottom && pR.bottom > sR.top) {
             score += 100; scoreText.innerHTML = score;
+            fxFloatDmg(py7, '+100 💰', '#f1c40f');
             playSound(900, 'square', 0.1);
             s.remove(); clearInterval(sFall);
           }
@@ -1485,21 +1837,38 @@ function triggerUltimate() {
         }, 30);
       });
     } else if (skin === 'Phoenix') {
-      // Rebirth: Heal penuh & Bersihkan layar & Invulnerable 4 detik
+      const px8 = parseFloat(player.style.left)+25, py8 = window.innerHeight-130;
+      fxPhoenixBurst(px8, py8);
+      fxThrusterTrail(2000);
       hp = 50; updateHPBar();
+      fxFloatDmg(py8, '❤️ FULL HEAL!', '#2ecc71');
       document.querySelectorAll('.obstacle, .enemy-plane').forEach(o => {
+        fxShockwave(o.offsetLeft, o.offsetTop, '#ff6b35');
         createParticles(o.offsetLeft, o.offsetTop, '#ff4757');
         o.remove();
       });
       shield++; player.classList.add('shield-active');
-      setTimeout(() => { shield = Math.max(0, shield-1); if(shield === 0) player.classList.remove('shield-active'); }, 4000);
+      player.style.filter = "drop-shadow(0 0 15px #ff6b35)";
+      setTimeout(() => {
+        shield = Math.max(0, shield-1);
+        if(shield === 0) player.classList.remove('shield-active');
+        player.style.filter = "";
+        fxPlaneBanner('🔥 PHOENIX FADING', '#ff6b35', '');
+      }, 4000);
     }
 
     scoreText.innerHTML = score;
+    // Tampilkan cooldown bar visual
+    const skillColors = {
+      'Default':'#00f2ff','UFO':'#a29bfe','Rocket':'#ff6b35','Dragon':'#ff4d00',
+      'Cyber':'#00cec9','Stealth':'#6c5ce7','Phantom':'#9b59b6','Gold':'#f1c40f','Phoenix':'#ff6b35'
+    };
+    fxCooldownBar(cd, skillColors[skin] || '#00f2ff');
     setTimeout(() => {
       ultMsg.innerText = `${skillName} READY [R-CLICK]`;
       ultMsg.style.color = "var(--primary)";
       playSound(800, 'sine', 0.1);
+      fxPlaneBanner('✅ SKILL READY', skillColors[skin] || '#00f2ff', skillName);
     }, cd);
   }
 }
@@ -1945,6 +2314,115 @@ function fxCardEffect(effect, side) {
   }
   // Selalu tampilkan damage float
   fxFloatDmg(yPos - 30, side === 'player' ? '💥 ATK!' : '⚔️ HIT!', side === 'player' ? '#ff6b81' : '#00f2ff');
+}
+
+// ===== PLANE SKILL VISUAL FX =====
+
+function fxPlaneBanner(text, color, sub='') {
+  const el = document.createElement('div');
+  el.className = 'plane-skill-banner';
+  el.style.color = color;
+  el.style.background = `rgba(0,0,0,0.7)`;
+  el.style.borderColor = color;
+  el.innerHTML = text + (sub ? `<br><span style="font-size:0.5em;opacity:0.7;letter-spacing:3px;">${sub}</span>` : '');
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1700);
+}
+
+function fxCooldownBar(cd, color) {
+  const old = document.querySelector('.skill-cooldown-bar');
+  if(old) old.remove();
+  const bar = document.createElement('div');
+  bar.className = 'skill-cooldown-bar';
+  const fill = document.createElement('div');
+  fill.className = 'skill-cooldown-fill';
+  fill.style.background = color;
+  fill.style.setProperty('--cd', cd + 'ms');
+  bar.appendChild(fill);
+  document.body.appendChild(bar);
+  setTimeout(() => bar.remove(), cd + 100);
+}
+
+function fxSonicRings(cx, cy, color, count=5) {
+  for(let i=0; i<count; i++) {
+    const r = document.createElement('div');
+    r.className = 'sonic-ring';
+    r.style.cssText = `left:${cx}px;top:${cy}px;color:${color};border-color:${color};animation-delay:${i*0.08}s;animation-duration:${0.5+i*0.06}s;`;
+    document.body.appendChild(r);
+    setTimeout(() => r.remove(), 800 + i*80);
+  }
+}
+
+function fxThrusterTrail(duration=3000) {
+  const interval = setInterval(() => {
+    if(gameOver || currentGameMode !== 'plane') { clearInterval(interval); return; }
+    const px = parseFloat(player.style.left) + 20;
+    const py = parseFloat(player.style.bottom) || 100;
+    const flame = document.createElement('div');
+    flame.style.cssText = `position:fixed;left:${px}px;bottom:${py-20}px;font-size:${16+Math.random()*12}px;pointer-events:none;z-index:16;animation:thrusterFlame 0.3s ease-out forwards;`;
+    flame.textContent = ['🔥','💥','⚡'][Math.floor(Math.random()*3)];
+    document.body.appendChild(flame);
+    setTimeout(() => flame.remove(), 350);
+  }, 60);
+  setTimeout(() => clearInterval(interval), duration);
+}
+
+function fxPhantomTrails(duration=5000) {
+  const interval = setInterval(() => {
+    if(gameOver || currentGameMode !== 'plane') { clearInterval(interval); return; }
+    const ghost = document.createElement('div');
+    ghost.textContent = player.textContent || '✈️';
+    const rect = player.getBoundingClientRect();
+    ghost.style.cssText = `position:fixed;left:${rect.left}px;top:${rect.top}px;font-size:30px;pointer-events:none;z-index:15;opacity:0.5;animation:phantomTrail 0.5s ease-out forwards;`;
+    document.body.appendChild(ghost);
+    setTimeout(() => ghost.remove(), 550);
+  }, 80);
+  setTimeout(() => clearInterval(interval), duration);
+}
+
+function fxGravityWave(cx, cy) {
+  for(let i=0; i<4; i++) {
+    setTimeout(() => {
+      fxShockwave(cx, cy, '#a29bfe');
+      fxRipple(cx, cy, '#74b9ff');
+    }, i * 150);
+  }
+}
+
+function fxPhoenixBurst(cx, cy) {
+  fxScreenFlash('rgba(255,100,0,0.6)', 300);
+  fxBurstParticles(cx, cy, '#ff4757', 30, ['🔥','✨','🌟','💥']);
+  fxBurstParticles(cx, cy, '#f1c40f', 20, ['⭐','🔆']);
+  for(let i=0; i<3; i++) {
+    setTimeout(() => fxShockwave(cx, cy, '#ff6b35'), i*100);
+  }
+  fxSkillText('🔥 REBORN FROM ASHES 🔥', '#ff6b35', 'PHOENIX REBIRTH');
+}
+
+function fxMidasTouch(cx, cy) {
+  fxScreenFlash('rgba(241,196,15,0.5)', 250);
+  fxBurstParticles(cx, cy, '#f1c40f', 35, ['⭐','💰','✨','👑']);
+  fxSonicRings(cx, cy, '#f1c40f', 4);
+  fxSkillText('✨ MIDAS TOUCH ✨', '#f1c40f', 'EVERYTHING IS GOLD');
+}
+
+function fxStealthMode(active) {
+  if(active) {
+    fxScreenFlash('rgba(100,100,255,0.3)', 200);
+    fxBurstParticles(
+      parseFloat(player.style.left)+20,
+      window.innerHeight - 120,
+      '#6c5ce7', 20, ['👻','💨','🌫️']
+    );
+    fxSkillText('👻 PHASE SHIFT', '#6c5ce7', 'INVISIBLE MODE');
+  }
+}
+
+function fxMagneticPulse(cx, cy) {
+  fxScreenFlash('rgba(0,184,255,0.3)', 200);
+  fxSonicRings(cx, cy, '#00cec9', 5);
+  fxBurstParticles(cx, cy, '#00cec9', 20, ['🔵','💠','⚡']);
+  fxSkillText('🔵 MAGNETIC PULSE', '#00cec9', 'ATTRACTING STARS');
 }
 
 function spawnStar() {
@@ -2430,7 +2908,7 @@ function realStartGame(mode) {
     document.getElementById('chessContainer').style.display = 'none';
     document.getElementById('ballBattleContainer').style.display = 'none';
     document.getElementById('cardBattleContainer').style.display = 'none';
-    document.getElementById('cardBattleContainer').style.display = 'flex';
+    document.getElementById('cardBattleContainer').style.display = 'flex'; // CB5: flex agar layout benar
     initCardBattle();
   }
 }
@@ -2611,6 +3089,9 @@ function showLobby() {
     if(skillBtn) skillBtn.style.display = 'none';
     const cbContainer = document.getElementById('cardBattleContainer');
     if(cbContainer) cbContainer.style.display = 'none';
+    // Update coins di lobby baru
+    const lobbyCoins = document.getElementById('lobbyCoins');
+    if(lobbyCoins) lobbyCoins.textContent = '💰 ' + (coins || 0);
     
     // Switch UI ke Lobby
     document.getElementById('lobby').style.display = 'flex';
@@ -4043,7 +4524,10 @@ function cbShowCardSlot(side, card) {
 
 function cbPlayCard(idx) {
   if (cbTurn !== 'player' || cbProcessing) return;
+  // CB2 Fix: validasi idx masih valid (anti double-tap)
+  if (idx < 0 || idx >= cbHand.length) return;
   const card = cbHand[idx];
+  if (!card) return;
   if (card.cost > cbPlayerMana) { cbSetLog('❌ Mana tidak cukup!'); return; }
 
   cbProcessing = true;
@@ -4110,24 +4594,34 @@ function cbPlayCard(idx) {
       break;
   }
 
-  // Damage ke musuh
-  cbEnemyHp -= dmg;
-  playSound(600, 'square', 0.1);
-  cbSetLog(logMsg + ` 💥 Musuh -${dmg} HP!`);
+  // Damage ke musuh (kartu heal/shield/dodge/void tidak serang langsung)
+  const noAttackEffects = ['heal','shield','dodge','void','copy'];
+  const actualDmg = noAttackEffects.includes(card.effect) ? 0 : dmg;
+  cbEnemyHp -= actualDmg;
+  const dmgText = actualDmg > 0 ? ` 💥 Musuh -${actualDmg} HP!` : '';
+  playSound(actualDmg > 0 ? 600 : 440, 'square', 0.1);
+  cbSetLog(logMsg + dmgText);
 
   setTimeout(() => {
-    cbCheckWin();
-    cbDrawCard();
-    cbProcessing = false;
-    cbUpdateUI();
+    const isOver = cbCheckWin();
+    if (!isOver) {
+      cbDrawCard();
+      cbProcessing = false;
+      cbUpdateUI();
+    }
   }, 800);
 }
 
 function cbEndTurn() {
-  if (cbTurn !== 'player' || cbProcessing) return;
+  // CB3 Fix: blokir jika masih processing atau bukan giliran player
+  if (cbTurn !== 'player' || cbProcessing || gameOver) return;
   cbTurn = 'enemy';
+  cbProcessing = true; // Kunci agar tidak bisa dipanggil lagi
   cbUpdateUI();
-  setTimeout(() => cbEnemyTurn(), 1000);
+  setTimeout(() => {
+    cbProcessing = false;
+    cbEnemyTurn();
+  }, 1000);
 }
 
 function cbEnemyTurn() {
@@ -4211,11 +4705,11 @@ function cbEnemyTurn() {
 function cbStartPlayerTurn() {
   if (gameOver) return;
   cbTurn = 'player';
+  cbProcessing = false; // CB4 Fix: pastikan processing direset
   cbRound++;
-  cbPlayerMana = Math.min(cbManaMax, cbPlayerMana + cbManaMax); // Isi ulang mana
-  cbPlayerMana = cbManaMax;
+  cbPlayerMana = cbManaMax; // Isi ulang mana penuh
   cbDrawCard();
-  cbSetLog(`🌟 Giliran #${cbRound} - Mana terisi! Pilih kartumu!`);
+  cbSetLog(`🌟 Ronde ${cbRound} — Pilih kartumu!`);
   cbUpdateUI();
 }
 
@@ -4248,6 +4742,156 @@ function cbCheckWin() {
 // ============================================================
 //  END CARD BATTLE
 // ============================================================
+
+// ============================================================
+//  LOBBY CANVAS ANIMATION - Particle Field + Grid
+// ============================================================
+(function initLobbyCanvas() {
+  const canvas = document.getElementById('lobbyCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], gridLines = [], animFrame;
+  let isLobbyActive = true;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Buat partikel
+  function makeParticle() {
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.8 + 0.3,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      alpha: Math.random() * 0.6 + 0.1,
+      color: Math.random() > 0.6 ? '#00f2ff' : Math.random() > 0.5 ? '#a29bfe' : '#ffffff',
+      pulse: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.02 + Math.random() * 0.03
+    };
+  }
+
+  for (let i = 0; i < 80; i++) particles.push(makeParticle());
+
+  // Buat grid perspective
+  function drawGrid() {
+    const t = Date.now() * 0.0003;
+    const vanishY = H * 0.5;
+    const cols = 12, rows = 14;
+
+    ctx.strokeStyle = 'rgba(0,242,255,0.04)';
+    ctx.lineWidth = 0.5;
+
+    // Grid horizontal
+    for (let r = 0; r <= rows; r++) {
+      const prog = r / rows;
+      const y = vanishY + (H - vanishY) * prog;
+      const spread = prog * W * 0.9;
+      const cx = W / 2;
+      ctx.beginPath();
+      ctx.moveTo(cx - spread / 2, y);
+      ctx.lineTo(cx + spread / 2, y);
+      ctx.stroke();
+    }
+
+    // Grid vertikal
+    for (let c = 0; c <= cols; c++) {
+      const prog = c / cols;
+      const startX = W * 0.05 + (W * 0.9) * prog;
+      ctx.beginPath();
+      ctx.moveTo(W / 2, vanishY);
+      ctx.lineTo(startX, H);
+      ctx.stroke();
+    }
+
+    // Garis horizon bercahaya
+    const grad = ctx.createLinearGradient(0, vanishY, W, vanishY);
+    grad.addColorStop(0, 'transparent');
+    grad.addColorStop(0.3, 'rgba(0,242,255,0.15)');
+    grad.addColorStop(0.5, 'rgba(0,242,255,0.3)');
+    grad.addColorStop(0.7, 'rgba(0,242,255,0.15)');
+    grad.addColorStop(1, 'transparent');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, vanishY);
+    ctx.lineTo(W, vanishY);
+    ctx.stroke();
+  }
+
+  function drawParticles() {
+    particles.forEach((p, i) => {
+      p.pulse += p.pulseSpeed;
+      const a = p.alpha * (0.6 + 0.4 * Math.sin(p.pulse));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color.replace(')', `,${a})`).replace('rgb', 'rgba').replace('#', 'rgba(').replace('rgba(', 'rgba(');
+
+      // Gunakan globalAlpha supaya lebih simpel
+      ctx.globalAlpha = a;
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Koneksi antar partikel dekat
+      for (let j = i + 1; j < particles.length; j++) {
+        const p2 = particles[j];
+        const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+        if (dist < 80) {
+          ctx.globalAlpha = (1 - dist / 80) * 0.12;
+          ctx.strokeStyle = '#00f2ff';
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+      }
+
+      // Move
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x = W;
+      if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H;
+      if (p.y > H) p.y = 0;
+    });
+  }
+
+  function drawVignette() {
+    const grad = ctx.createRadialGradient(W/2, H/2, H*0.3, W/2, H/2, H*0.9);
+    grad.addColorStop(0, 'transparent');
+    grad.addColorStop(1, 'rgba(0,0,0,0.7)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  function loop() {
+    if (!isLobbyActive) return;
+    const lobby = document.getElementById('lobby');
+    if (!lobby || lobby.style.display === 'none') {
+      animFrame = requestAnimationFrame(loop);
+      return;
+    }
+    ctx.clearRect(0, 0, W, H);
+    drawGrid();
+    drawParticles();
+    drawVignette();
+    animFrame = requestAnimationFrame(loop);
+  }
+
+  loop();
+
+  // Stop saat game mulai
+  const origShowLobby = window.showLobby;
+  window.addEventListener('gamedex-lobby-hide', () => { isLobbyActive = false; });
+  window.addEventListener('gamedex-lobby-show', () => { isLobbyActive = true; if(!animFrame) loop(); });
+})();
 
 // ============================================================
 //  CLIENT-SIDE SECURITY LAYER - Game Dex Pro Edition
